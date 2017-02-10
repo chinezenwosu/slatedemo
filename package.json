@@ -4,9 +4,10 @@
   "description": "A web application for Andela Toastmasters",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test",
+    "test": "babel-node ./node_modules/.bin/jasmine",
     "start": "",
-    "server": " ./node_modules/.bin/babel-node server"
+    "server": "./node_modules/.bin/babel-node server",
+    "lint": "./node_modules/.bin/eslint ./**/*.js*"
   },
   "repository": {
     "type": "git",
@@ -28,9 +29,14 @@
     "eslint-config-google": "^0.7.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.9.0"
+    "eslint-plugin-react": "^6.9.0",
+    "jasmine": "^2.5.3",
+    "request": "^2.79.0"
   },
   "dependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-polyfill": "^6.22.0",
+    "babel-register": "^6.22.0",
     "dotenv": "^4.0.0",
     "express": "^4.14.1"
   }

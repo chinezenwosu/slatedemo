@@ -1,13 +1,23 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import path from 'path';
+import webpack from 'webpack';
+import webpackMiddleware from 'webpack-dev-middleware';
+import webpackConfig from '../config/webpack.config.dev';
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
 
 let app = express();
 
-app.get('/helloworld', (req, res) => {
-  res.send('Hello World');
+app.use(webpackMiddleware(webpack(webpackConfig)));
+
+app.get('/helloworld', (request, response) => {
+  response.send('Hello World');
+});
+
+app.get('/', (request, response) => {
+  response.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 const server = app.listen(PORT, () => {
@@ -19,6 +29,4 @@ module.exports = {
     console.log('Stopping server on port', PORT);
     server.close();
   },
-
-  app: app,
 };

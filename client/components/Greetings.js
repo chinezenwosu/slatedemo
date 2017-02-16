@@ -11,7 +11,11 @@ class Greetings extends React.Component {
    */
   render() {
     return(
-      <h1>Heyor</h1>
+      <div className="container">
+        <div className="row">
+          <h1>Heyor</h1>
+        </div>
+      </div>
     );
   };
 };

@@ -1,4 +1,15 @@
 {
     "extends": "google",
-    "parser": "babel-eslint"
+    "parser": "babel-eslint",
+    "rules": {
+        "require-jsdoc": ["error", {
+            "require": {
+                "FunctionDeclaration": true,
+                "MethodDefinition": false,
+                "ClassDeclaration": false,
+                "ArrowFunctionExpression": false
+            }
+        }],
+        "object-curly-spacing": ["error", "always"]
+    }
 }

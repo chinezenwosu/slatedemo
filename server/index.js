@@ -23,7 +23,7 @@ app.get('/helloworld', (request, response) => {
   response.send('Hello World');
 });
 
-app.get('/', (request, response) => {
+app.get('*', (request, response) => {
   response.sendFile(path.join(__dirname, '../public/index.html'));
 });
 

@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
+import favicon from 'serve-favicon';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
@@ -12,28 +13,21 @@ const compiler = webpack(webpackConfig);
 
 let app = express();
 
+app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(favicon(path.join(__dirname, '..', 'public', 'favicon.png')));
+
 app.use(webpackMiddleware(compiler, {
   hot: true,
   publicPath: webpackConfig.output.publicPath,
   noInfo: true,
 }));
-app.use(webpackHotMiddleware(compiler));
 
-app.get('/helloworld', (request, response) => {
-  response.send('Hello World');
-});
+app.use(webpackHotMiddleware(compiler));
 
 app.get('*', (request, response) => {
   response.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-const server = app.listen(PORT, () => {
-  console.log('Server running on port', PORT);
+app.listen(PORT, () => {
+  console.log('Configa running on port', PORT);
 });
-
-module.exports = {
-  stopServer: () => {
-    console.log('Stopping server on port', PORT);
-    server.close();
-  },
-};

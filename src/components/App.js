@@ -1,10 +1,108 @@
 import React from 'react';
-// import NavBar from './NavBar';
+import documentTitles from '../data';
+import _ from 'lodash';
 
 class App extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      slideIndex: 1,
+    };
+
+    this.onClick = this.onClick.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.slide = this.slide.bind(this);
+    this.plusSlides = this.plusSlides.bind(this);
+    this.showSlides = this.showSlides.bind(this);
+    this.currentSlide = this.currentSlide.bind(this);
+  }
+
+  componentDidMount() {
+    this.showSlides(this.state.slideIndex);
+  }
+
+  openModal() {
+    document.getElementById('myModal').style.display = 'block';
+  }
+
+  onClick(event) {
+    event.preventDefault();
+    this.openModal();
+    this.currentSlide(event.target.getAttribute('data-position'));
+  }
+
+  slide(event) {
+    this.currentSlide(event.target.getAttribute('data-position'));
+  }
+
+  closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+  }
+
+  showSlides(position) {
+    let i;
+    let slides = document.getElementsByClassName('mySlides');
+    let previewLinks = document.getElementsByClassName('preview-link');
+    let captionText = document.getElementById('caption');
+    let captionNumber = document.getElementById('caption-number');
+    let slideIndex = position > slides.length ? 1 : (position < 1 ? slides.length : this.state.slideIndex);
+    this.setState({
+      slideIndex: slideIndex,
+    }, () => {
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = 'none';
+      }
+      for (i = 0; i < previewLinks.length; i++) {
+        previewLinks[i].className = previewLinks[i].className.replace(' active', '');
+      }
+      slides[this.state.slideIndex - 1].style.display = 'block';
+      previewLinks[this.state.slideIndex - 1].className += ' active';
+      captionText.innerHTML = previewLinks[this.state.slideIndex - 1].innerText;
+      captionNumber.innerHTML = this.state.slideIndex + ' / 4';
+    });
+  }
+
+  currentSlide(position) {
+    this.setState({
+      slideIndex: position,
+    }, () => {
+      this.showSlides(this.state.slideIndex);
+    });
+  }
+
+  plusSlides(event) {
+    this.setState({
+      slideIndex: parseInt(this.state.slideIndex) + parseInt(event.target.getAttribute('data-count')),
+    }, () => {
+      this.showSlides(this.state.slideIndex);
+    });
+  }
+
   render() {
+    const boxes = _.map(documentTitles, (value, index) =>
+      <div key={value.name} className="col-sm-4 col-md-3">
+        <div className="box">
+          <a className="doc-link" href="#" data-position={index + 1} onClick={this.onClick}>
+            {value.name}
+          </a>
+        </div>
+      </div>
+    );
+
+    const previewBoxes = _.map(documentTitles, (value, index) =>
+      <div key={value.name} className="column col-sm-12">
+        <h4 className="preview-link" data-position={index + 1} onClick={this.slide}>{value.name}</h4>
+      </div>
+    );
+
+    const docPanes = _.map(documentTitles, (value, index) =>
+      <div key={value.name} className="mySlides">
+        <textarea className="form-control"></textarea>
+      </div>
+    );
+
     return (
-      <section id="portfolio" className="no-padding-bottom"> 
+      <section id="portfolio" className="no-padding-bottom">
         <div className="container">
           <div className="row">
             <div className="col-md-12">
@@ -15,60 +113,27 @@ class App extends React.Component {
         </div>
         <div className="container-fluid">
           <div className="row no-space">
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/paper-presentation.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 1" data-footer="Description of Project No.1">
-                  <img src="img/portfolio/paper-presentation.jpg" alt="" className="img-responsive" />
-                </a>
+            {boxes}
+          </div>
+        </div>
+
+        <div id="myModal" className="modal">
+          <span className="close cursor" onClick={this.closeModal}>&times;</span>
+          <div className="under-slide" />
+          <div className="modal-content">
+            <div className="row">
+              <div className="col-sm-3 toc">
+                {previewBoxes}
               </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/business-card-26.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 2" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/business-card-26.jpg" alt="" className="img-responsive" />
-                </a>
-              </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/gravity-paper.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 3" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/gravity-paper.jpg" alt="" className="img-responsive" />
-                </a>
-              </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/envelope-brand.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 4" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/envelope-brand.jpg" alt="" className="img-responsive" />
-                </a>
-              </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/business-card.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 5" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/business-card.jpg" alt="" className="img-responsive" />
-                </a>
-              </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/trifold.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 6" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/trifold.jpg" alt="" className="img-responsive" />
-                </a>
-              </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/label-clothes.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 7" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/label-clothes.jpg" alt="" className="img-responsive" />
-                </a>
-              </div>
-            </div>
-            <div className="col-sm-4 col-md-3">
-              <div className="box">
-                <a href="img/portfolio/ipad-air-2.jpg" title="" data-toggle="lightbox" data-gallery="portfolio" data-title="Name of the work 8" data-footer="Fifth abundantly made Give sixth hath. Cattle creature i be don't them.">
-                  <img src="img/portfolio/ipad-air-2.jpg" alt="" className="img-responsive" />
-                </a>
+
+              <div className="col-sm-9 doc-pane">
+                <a className="prev" data-count={-1} onClick={this.plusSlides}>&#10094;</a>
+                <a className="next" data-count={1} onClick={this.plusSlides}>&#10095;</a>
+                <div className="caption-container">
+                  <span id="caption-number" />
+                  <span id="caption" />
+                </div>
+                {docPanes}
               </div>
             </div>
           </div>

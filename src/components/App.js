@@ -5,11 +5,19 @@ import _ from 'lodash';
 class App extends React.Component {
   constructor(props) {
     super();
-    this.state = {
+
+    let initialState = {
       slideIndex: 1,
     };
 
+    documentTitles.forEach((value) => {
+      initialState[value.domName] = JSON.stringify(value.json, null, 2);
+    });
+
+    this.state = initialState;
+
     this.onClick = this.onClick.bind(this);
+    this.onChange = this.onChange.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.slide = this.slide.bind(this);
     this.plusSlides = this.plusSlides.bind(this);
@@ -19,6 +27,12 @@ class App extends React.Component {
 
   componentDidMount() {
     this.showSlides(this.state.slideIndex);
+  }
+
+  onChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
   }
 
   openModal() {
@@ -41,7 +55,7 @@ class App extends React.Component {
 
   showSlides(position) {
     let i;
-    let slides = document.getElementsByClassName('mySlides');
+    let slides = document.getElementsByClassName('my-slides');
     let previewLinks = document.getElementsByClassName('preview-link');
     let captionText = document.getElementById('caption');
     let captionNumber = document.getElementById('caption-number');
@@ -51,14 +65,14 @@ class App extends React.Component {
     }, () => {
       for (i = 0; i < slides.length; i++) {
         slides[i].style.display = 'none';
-      }
-      for (i = 0; i < previewLinks.length; i++) {
+        slides[i].className = slides[i].className.replace(' active', '');
         previewLinks[i].className = previewLinks[i].className.replace(' active', '');
       }
       slides[this.state.slideIndex - 1].style.display = 'block';
+      slides[this.state.slideIndex - 1].className += ' active';
       previewLinks[this.state.slideIndex - 1].className += ' active';
       captionText.innerHTML = previewLinks[this.state.slideIndex - 1].innerText;
-      captionNumber.innerHTML = this.state.slideIndex + ' / 4';
+      captionNumber.innerHTML = this.state.slideIndex + ' / ' + slides.length;
     });
   }
 
@@ -96,8 +110,8 @@ class App extends React.Component {
     );
 
     const docPanes = _.map(documentTitles, (value, index) =>
-      <div key={value.name} className="mySlides">
-        <textarea className="form-control"></textarea>
+      <div key={value.name} className="my-slides">
+        <textarea spellCheck="false" className="form-control" name={value.domName} value={this.state[value.domName]} onChange={this.onChange} />
       </div>
     );
 
@@ -106,8 +120,8 @@ class App extends React.Component {
         <div className="container">
           <div className="row">
             <div className="col-md-12">
-              <h2 className="heading">Selected works</h2>
-              <p className="lead margin-bottom--big">You can make also image gallery with this section easily. </p>
+              <img className="heading" src="img/logo.png" />
+              <p className="lead">Edit and copy common configuration files ... </p>
             </div>
           </div>
         </div>
@@ -122,11 +136,11 @@ class App extends React.Component {
           <div className="under-slide" />
           <div className="modal-content">
             <div className="row">
-              <div className="col-sm-3 toc">
+              <div className="col-md-3 col-sm-12 hidden-sm hidden-xs toc">
                 {previewBoxes}
               </div>
 
-              <div className="col-sm-9 doc-pane">
+              <div className="col-md-9 col-sm-12 col-xs-12 doc-pane">
                 <a className="prev" data-count={-1} onClick={this.plusSlides}>&#10094;</a>
                 <a className="next" data-count={1} onClick={this.plusSlides}>&#10095;</a>
                 <div className="caption-container">

@@ -14,7 +14,7 @@ const compiler = webpack(webpackConfig);
 let app = express();
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use(favicon(path.join(__dirname, '..', 'public', 'favicon.png')));
+app.use(favicon(path.join(__dirname, '..', 'public', 'img', 'favicon.png')));
 
 app.use(webpackMiddleware(compiler, {
   hot: true,

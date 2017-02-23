@@ -1,11 +1,13 @@
-section {
-  position: relative;
-  padding-top: 90px;
-  padding-bottom: 90px;
+body {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 200;
+  // z-index: $docCount;
 }
 
-.row > .column {
-  padding: 0 8px;
+section {
+  position: relative;
+  padding-top: 50px;
+  padding-bottom: 90px;
 }
 
 .row:after {
@@ -24,7 +26,7 @@ section {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: black;
+  background-color: $trans-black;
 }
 
 /* Modal Content */
@@ -33,25 +35,25 @@ section {
   background-color: transparent;
   margin: auto;
   padding: 0;
+  border: none;
   width: 90%;
   max-width: 1200px;
   padding-top: 100px;
+  box-shadow: none;
 }
 
 .under-slide {
   height: 100px;
   width: 100%;
   z-index: 10;
-  background: black;
   position: fixed;
 }
 
 /* The Close Button */
 .close {
-  color: white;
   position: absolute;
-  top: 25px;
-  left: 35px;
+  top: 8px;
+  left: 15px;
   z-index: 1000;
   font-size: 45px;
   font-weight: bold;
@@ -62,18 +64,12 @@ section {
   }
 }
 
-.mySlides {
-  display: none;
-  background: white;
-  min-height: calc(100vh - 150px);
-}
-
 .toc {
-  position: fixed;
   width: 21%;
   height: calc(100vh - 150px);
   overflow: scroll;
 }
+
 .doc-pane {
   float: right;
 }
@@ -91,45 +87,32 @@ section {
   user-select: none;
   -webkit-user-select: none;
   position: fixed;
-  color: rgba(242, 242, 242, 0.6);
   margin-top: -60px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   &:hover {
-    color: white;
+    text-shadow: none;
     text-decoration: none;
-    background-color: rgba(0, 0, 0, 0.8);
   }
 }
 
 .next {
-  right: 65px;
+  float: right;
+  position: inherit;
 }
 
 .caption-container {
   text-align: center;
-  position: fixed;
   z-index: 102;
-  width: calc(75% - 105px);
-  background-color: black;
-  color: #f2f2f2;
+  font-weight: 500;
+  color: #545353;
   margin-top: -50px;
+  margin-bottom: 30px;
   #caption-number {
     margin-right: 30px;
     font-size: 14px;
   }
   #caption {
     font-size: 14px;
-  }
-}
-
-.preview-link {
-  opacity: 0.8;
-  font-weight: 200;
-  padding: 10px 5px;
-  margin: 0;
-  border: 8px solid transparent;
-  &:hover, &.active {
-    cursor: pointer;
-    border: 8px solid rgba(255, 255, 255, 0.5);
   }
 }
 
@@ -156,8 +139,9 @@ a.hover-shadow {
     .doc-link {
       font-size: 26px;
       text-align: center;
-      padding: calc(50% - 26px) 0;
+      padding: 80px 0;
       color: #fff;
+      border: 5px dotted lighten(nth($docColors, $i), 15);
       text-decoration: none;
       display: block;
       &:hover {
@@ -169,16 +153,43 @@ a.hover-shadow {
   .column:nth-of-type(#{$i}) {
     background-color: nth($docColors, $i);
     padding: 0;
-    text-align: center;
+    margin: 0 0 10px;
+    .preview-link {
+      font-weight: 200;
+      padding: 15px 10px;
+      margin: 0;
+      box-shadow: $box-shadow;
+      &:hover, &:focus, &.active {
+        cursor: pointer;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .my-slides {
+    display: none;
+    background: white;
+    box-shadow: $box-shadow;
+    min-height: calc(100vh - 150px);
+    &:nth-of-type(#{$i + 1}).active {
+      border: 4px solid nth($docColors, $i);
+    }
   }
 }  
 
-.preformatted {
-  font-family: monospace;
-  white-space: pre;
-}
-
 textarea.form-control {
+  font-family: 'Inconsolata', monospace;
+  font-size: 15px;
   height: calc(100vh - 150px);
   border-radius: 0;
+  border: none;
+}
+
+.heading {
+  margin-bottom: 20px;
+}
+
+.lead {
+  font-size: 24px;
+  margin-bottom: 60px;
 }

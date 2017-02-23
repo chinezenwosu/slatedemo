@@ -16,13 +16,15 @@ let app = express();
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(favicon(path.join(__dirname, '..', 'public', 'img', 'favicon.png')));
 
-app.use(webpackMiddleware(compiler, {
-  hot: true,
-  publicPath: webpackConfig.output.publicPath,
-  noInfo: true,
-}));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(webpackMiddleware(compiler, {
+    hot: true,
+    publicPath: webpackConfig.output.publicPath,
+    noInfo: true,
+  }));
 
-app.use(webpackHotMiddleware(compiler));
+  app.use(webpackHotMiddleware(compiler));
+}
 
 app.get('*', (request, response) => {
   response.sendFile(path.join(__dirname, '../public/index.html'));

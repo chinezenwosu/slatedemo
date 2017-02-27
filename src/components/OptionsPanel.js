@@ -12,19 +12,52 @@ class OptionsPanel extends React.Component {
     this.state = initialState;
 
     this.copyAll = this.copyAll.bind(this);
+    this.export = this.export.bind(this);
+    this.clearAll = this.clearAll.bind(this);
+  }
+
+  getActiveSlide() {
+    return document.querySelector('.my-slides.active textarea');
+  }
+
+  alertMessage(alertId) {
+    $(alertId).animate({ 'margin-right': '100%' }, 1000);
+
+    window.setTimeout(function() {
+      $(alertId).animate({ 'margin-right': '-405px' }, 1000);
+    }, 4000);
   }
 
   copyAll() {
-    let activeSlide = document.querySelector('.my-slides.active textarea');
-    copy(activeSlide.value, {
+    copy(this.getActiveSlide().value, {
       debug: true,
       message: 'Press #{key} to copy',
     });
-    $('#copy-alert').animate({ 'margin-right': '100%' }, 1000);
+    this.alertMessage('#copy-alert');
+  }
 
-    window.setTimeout(function() {
-      $('#copy-alert').animate({ 'margin-right': '-405px' }, 1000);
-    }, 4000);
+  downloadInnerHtml(filename, content, mimeType) {
+    let link = document.getElementById('export-link');
+    mimeType = mimeType || 'text/plain';
+
+    link.setAttribute('download', filename);
+    link.setAttribute(
+      'href',
+      'data:' + mimeType + ';charset=utf-8,' +
+      encodeURIComponent(content)
+    );
+    link.click();
+  }
+
+  export() {
+    let caption = document.getElementById('caption');
+    let fileName = caption.innerText;
+    this.downloadInnerHtml(fileName, this.getActiveSlide().value, 'text/html');
+    this.alertMessage('#export-alert');
+  }
+
+  clearAll() {
+    this.getActiveSlide().value = '';
   }
 
   render() {
@@ -34,19 +67,19 @@ class OptionsPanel extends React.Component {
           <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
           <strong>Successful! </strong>All texts have been copied.
         </div>
-        <button type="button" onClick={this.copyAll} className="btn btn-secondary">Copy All</button>
+        <button type="button" onClick={this.copyAll} className="btn btn-primary">Copy All</button>
 
-        <div id="export-alert" className="alert alert-warning alert-dismissable slide-alert">
+        <div id="export-alert" className="alert alert-success alert-dismissable slide-alert">
           <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
           <strong>successful! </strong>All texts have been exported.
         </div>
-        <button type="button" className="btn btn-secondary">Export</button>
+        <a id="export-link" onClick={this.export} className="btn btn-success">Export</a>
 
         <div id="other-alert" className="alert alert-success alert-dismissable slide-alert">
           <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
-          <strong>Successful! </strong>All texts have been copied
+          <strong>Successful! </strong>All texts have been removed
         </div>
-        <button type="button" className="btn btn-secondary">Other</button>
+        <button type="button" onClick={this.clearAll} className="btn btn-danger">Clear All</button>
       </div>
     );
   };

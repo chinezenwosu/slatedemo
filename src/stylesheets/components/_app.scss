@@ -197,12 +197,13 @@ textarea.form-control {
   margin-bottom: 60px;
 }
 
-.btn-group, .btn-group-vertical {
+.btn-group-vertical {
   position: absolute;
   right: 0;
-  margin: 4px;
-  .btn.btn-secondary {
+  margin-top: 4px;
+  &>.btn {
     margin-bottom: 2px;
+    border: transparent;
   }
   .btn:last-child:not(:first-child),
   .btn:first-child:not(:last-child) {
@@ -217,11 +218,14 @@ textarea.form-control {
   margin-right: -405px;
   right: 0;
   border-radius: 0;
-  padding: 5px 35px 5px 5px;
+  border: none;
+  padding: 5.5px 35px 5.5px 15px;
   min-width: 400px;
   overflow: hidden;
   position: absolute;
   opacity: 0.9;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   transition: all 1s ease-in-out;
 }
 

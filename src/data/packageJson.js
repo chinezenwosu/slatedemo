@@ -1,4 +1,5 @@
-{
+export default
+`{
   "name": "configa",
   "version": "1.0.0",
   "description": "A template zone for common configuration files",
@@ -54,5 +55,4 @@
     "webpack": "^2.2.1",
     "webpack-dev-middleware": "^1.10.0"
   }
-}
-
+}`;

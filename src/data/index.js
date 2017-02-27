@@ -1,25 +1,27 @@
-import * as PackageJson from '../components/docs/packageJson.json';
+import packageJson from './packageJson.js';
+import webpack from './webpack.js';
+import eslintrc from './eslintrc.js';
 
 let docs = [
   {
     name: 'package.json',
     domName: 'packagejson',
-    json: PackageJson,
+    text: packageJson,
   },
   {
     name: 'webpack.config.js',
     domName: 'webpack',
-    json: PackageJson,
+    text: webpack,
   },
   {
-    name: 'sona.js',
-    domName: 'sona',
-    json: PackageJson,
+    name: '.eslintrc.json',
+    domName: 'eslintrc',
+    text: eslintrc,
   },
   {
     name: 'egg.js',
     domName: 'egg',
-    json: PackageJson,
+    text: packageJson,
   },
 ];
 

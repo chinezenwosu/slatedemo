@@ -1,5 +1,6 @@
 import React from 'react';
 import documentTitles from '../data';
+import OptionsPanel from './OptionsPanel';
 import _ from 'lodash';
 
 class App extends React.Component {
@@ -11,7 +12,7 @@ class App extends React.Component {
     };
 
     documentTitles.forEach((value) => {
-      initialState[value.domName] = JSON.stringify(value.json, null, 2);
+      initialState[value.domName] = value.text;
     });
 
     this.state = initialState;
@@ -68,7 +69,7 @@ class App extends React.Component {
         slides[i].className = slides[i].className.replace(' active', '');
         previewLinks[i].className = previewLinks[i].className.replace(' active', '');
       }
-      slides[this.state.slideIndex - 1].style.display = 'block';
+      slides[this.state.slideIndex - 1].style.display = 'inline-block';
       slides[this.state.slideIndex - 1].className += ' active';
       previewLinks[this.state.slideIndex - 1].className += ' active';
       captionText.innerHTML = previewLinks[this.state.slideIndex - 1].innerText;
@@ -147,7 +148,10 @@ class App extends React.Component {
                   <span id="caption-number" />
                   <span id="caption" />
                 </div>
-                {docPanes}
+                <div className="doc-panel">
+                  {docPanes}
+                  <OptionsPanel />
+                </div>
               </div>
             </div>
           </div>

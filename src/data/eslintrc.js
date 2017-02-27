@@ -1,4 +1,5 @@
-{
+export default
+`{
   "extends": "google",
   "plugins": ["react"],
   "parser": "babel-eslint",
@@ -44,4 +45,4 @@
     "react/sort-comp": 1,
     "react/wrap-multilines": 1
   }
-}
+}`;

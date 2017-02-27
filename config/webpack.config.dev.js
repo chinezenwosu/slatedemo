@@ -38,6 +38,10 @@ export default {
         test: /\.(png|jpg)$/,
         loader: 'url?limit=25000',
       },
+      {
+        test: /\.txt$/,
+        loader: 'raw-loader',
+      },
     ],
   },
   resolve: {

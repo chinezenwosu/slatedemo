@@ -1,18 +1,24 @@
-let path = require('path');
-let webpack = require('webpack');
-let ExtractTextPlugin = require('extract-text-webpack-plugin');
+export default
+`import path from 'path';
+import webpack from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-module.exports = {
-  devtool: 'source-map',
+export default {
+  devtool: 'eval-source-map',
   entry: [
-    path.join(__dirname, '..', '/src/index.js'),
+    'webpack-hot-middleware/client', // Development middleware
+    path.join(__dirname, '../src/index.js'),
   ],
   output: {
-    path: path.join(__dirname, '..', 'public'),
+    path: '/',
     filename: 'bundle.js',
     publicPath: '/',
   },
   plugins: [
+    new ExtractTextPlugin('[name].css'),
+
+    // Production plugins
+
     new webpack.optimize.UglifyJsPlugin({
       minimize: true,
       compress: {
@@ -24,7 +30,12 @@ module.exports = {
         'NODE_ENV': JSON.stringify('production'),
       },
     }),
-    new ExtractTextPlugin('[name].css'),
+
+    // Development plugins
+
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
   ],
   module: {
     loaders: [
@@ -45,10 +56,6 @@ module.exports = {
         test: /\.(png|jpg)$/,
         loader: 'url?limit=25000',
       },
-      {
-        test: /\.txt$/,
-        loader: 'raw-loader',
-      },
     ],
   },
   resolve: {
@@ -60,4 +67,4 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
   },
-};
+};`;

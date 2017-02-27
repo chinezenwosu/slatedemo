@@ -38,9 +38,15 @@ class OptionsPanel extends React.Component {
 
         <div id="export-alert" className="alert alert-warning alert-dismissable slide-alert">
           <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
-          <strong>successful: </strong>All texts have been exported.
+          <strong>successful! </strong>All texts have been exported.
         </div>
         <button type="button" className="btn btn-secondary">Export</button>
+
+        <div id="other-alert" className="alert alert-success alert-dismissable slide-alert">
+          <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <strong>Successful! </strong>All texts have been copied
+        </div>
+        <button type="button" className="btn btn-secondary">Other</button>
       </div>
     );
   };

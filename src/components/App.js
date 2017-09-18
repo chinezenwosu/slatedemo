@@ -1,6 +1,7 @@
 import React from 'react';
 import { Editor, Raw } from 'slate';
 import MarkHotKey from './MarkHotKey';
+import { replaceText } from './Events';
 
 const plugins = [
   MarkHotKey({ code: 66, type: 'bold' }),
@@ -8,6 +9,7 @@ const plugins = [
   MarkHotKey({ code: 73, type: 'italic' }),
   MarkHotKey({ code: 68, type: 'strikethrough' }),
   MarkHotKey({ code: 85, type: 'underline' }),
+  replaceText({ code: 55, text: 'and', isShiftKey: true })
 ]
 
 class App extends React.Component {

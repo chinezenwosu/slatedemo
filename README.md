@@ -1,3 +1,3 @@
-![GitHub Logo](./public/img/logo.png)
+SlateDemo
 
-A web application for getting commonly used configuration settings.
+An application for testing the slatejs text editor framework.

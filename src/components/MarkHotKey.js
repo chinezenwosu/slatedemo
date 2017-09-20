@@ -15,5 +15,4 @@ export default (options) => {
       return true;
     },
   };
-}
-;
+};

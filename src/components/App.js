@@ -1,55 +1,93 @@
 import React, { Component } from 'react';
 import { Editor } from 'slate-react';
-import { State } from 'slate';
+import { State, Block } from 'slate';
+import editList from 'slate-edit-list';
 
 import initialState from './initialState.json';
 
-const DEFAULT_NODE = 'paragraph';
-
-const schema = {
-	nodes: {
-		'block-quote': (props) => <blockquote {...props.attributes}>{props.children}</blockquote>,
-		'bulleted-list': (props) => <ul {...props.attributes}>{props.children}</ul>,
-		'heading-one': (props) => <h1 {...props.attributes}>{props.children}</h1>,
-		'heading-two': (props) => <h2 {...props.attributes}>{props.children}</h2>,
-		'list-item': (props) => <li {...props.attributes}>{props.children}</li>,
-		'numbered-list': (props) => <ol {...props.attributes}>{props.children}</ol>,
-	},
-	marks: {
-	bold: {
-		fontWeight: 'bold',
-	},
-	code: {
-		fontFamily: 'monospace',
-		backgroundColor: '#eee',
-		padding: '3px',
-		borderRadius: '4px',
-	},
-	italic: {
-		fontStyle: 'italic',
-	},
-	underlined: {
-		textDecoration: 'underline',
-	},
-	},
-};
+const listPlugin = editList({
+	listType: 'ul_list',
+	itemType: 'list_item',
+	defaultType: 'paragraph',
+});
+const plugins = [listPlugin];
 
 let self;
 
 class TextEditor extends Component {
+
 	constructor(props) {
 		super(props);
 		self = this;
 		this.state = {
 		content: State.fromJSON(initialState),
+		listItemsToggleStatus: [],
 		};
-	};
+		this.schema = {
+			nodes: {
+				'section': (props) => <div {...props.attrs}>{props.children}</div>,
+				'title': (props) => <h3 {...props.attrs}>{props.children}</h3>,
+				'paragraph': (props) => <p {...props.attrs}>{props.children}</p>,
+				'span': (props) => <span {...props.attrs}>{props.children}</span>,
+				'ul_list': (props) => <ul {...props.attrs}>{props.children}</ul>,
+				'ol_list': (props) => <ol {...props.attrs}>{props.children}</ol>,
+				'list_item': self.processListItems,
+			},
+			marks: {
+				bold: {
+					fontWeight: 'bold',
+				},
+				code: {
+					fontFamily: 'monospace',
+					backgroundColor: '#eee',
+					padding: '3px',
+					borderRadius: '4px',
+				},
+				italic: {
+					fontStyle: 'italic',
+				},
+				underlined: {
+					textDecoration: 'underline',
+				},
+			},
+			rules: [{
+				/* Rule that always makes the first block a title, normalizes by inserting one if no children, or setting the top to be a title */
+				match: (node) => node.kind === 'document',
+				validate: (document) => !document.nodes.size || document.nodes.first().type !== 'title' ? document.nodes : null,
+				normalize: (change, document, nodes) => {
+					if (!nodes.size) {
+						const title = Block.create({ type: 'title', data: {} });
+						return change.insertNodeByKey(document.key, 0, title);
+					}
 
-	hasMark(type) {
-		const state = this.state.content;
-		return state.activeMarks.some((mark) => mark.type == type);
+					return change.setNodeByKey(nodes.first().key, 'title');
+				},
+			}, {
+				/* Rule that only allows for one title, normalizes by making titles paragraphs */
+				match: (node) => node.kind === 'document',
+				validate: (document) => {
+					const invalidChildren = document.nodes.filter((child, index) => child.type === 'title' && index !== 0);
+					return invalidChildren.size ? invalidChildren : null;
+				},
+				normalize: (change, document, invalidChildren) => {
+					let updatedTransform = change;
+					invalidChildren.forEach((child) => {
+						updatedTransform = change.setNodeByKey(child.key, 'paragraph');
+					});
+					return updatedTransform;
+				},
+			}, {
+				/* Rule that forces at least one paragraph, normalizes by inserting an empty paragraph */
+				match: (node) => node.kind === 'document',
+				validate: (document) => document.nodes.size < 2 ? true : null,
+				normalize: (change, document) => {
+					const paragraph = Block.create({ type: 'paragraph', data: {} });
+					return change.insertNodeByKey(document.key, 1, paragraph);
+				},
+			}],
+		};
+		this.processListItems.suppressShouldComponentUpdate = true;
 	};
-
 	hasBlock(type) {
 		const state = this.state.content;
 		return state.blocks.some((node) => node.type == type);
@@ -58,6 +96,40 @@ class TextEditor extends Component {
 	onChange({ state }) {
 		self.setState({ content: state });
 	};
+
+	processListItems(props) {
+		const { state, node } = props;
+		const depth = listPlugin.utils.getItemDepth(state);
+		const text = props.children[0].props.node.text;
+		// add a minimize prop to item if it does not exist
+		let itemStatusIndex = self.state.listItemsToggleStatus.findIndex((item) => item.key === node.key);
+		if (itemStatusIndex < 0) {
+			self.state.listItemsToggleStatus.push({
+				key: node.key,
+				minimize: false,
+			});
+			itemStatusIndex = self.state.listItemsToggleStatus.length - 1;
+		}
+		return (
+			<li
+				{...props.attributes}>
+				<img
+				onClick={() => self.toggleListItem(itemStatusIndex)}
+				className='list-icon'
+				src={self.state.listItemsToggleStatus[itemStatusIndex].minimize ? './img/arrow_right.svg' : './img/arrow_down.svg'}
+			/>
+				{ self.state.listItemsToggleStatus[itemStatusIndex].minimize ? <span>{text}</span> : props.children }
+			</li>
+		);
+	};
+
+	toggleListItem(index) {
+		let listItemsToggleStatus = this.state.listItemsToggleStatus;
+		listItemsToggleStatus[index].minimize = !listItemsToggleStatus[index].minimize;
+		this.setState({
+			listItemsToggleStatus,
+		});
+	}
 
 	onKeyDown(e, data, change) {
 		if (!data.isMod) return;
@@ -85,89 +157,6 @@ class TextEditor extends Component {
 		return true;
 	};
 
-	onClickMark(e, type) {
-		e.preventDefault();
-		const state = this.state.content;
-		const change = state.change().toggleMark(type);
-		this.onChange(change);
-	};
-
-	onClickBlock(e, type) {
-		e.preventDefault();
-		const state = this.state.content;
-		const change = state.change();
-		const { document } = state;
-
-		if (type != 'bulleted-list' && type != 'numbered-list') {
-			const isActive = this.hasBlock(type);
-			const isList = this.hasBlock('list-item');
-
-			if (isList) {
-				change.setBlock(isActive ? DEFAULT_NODE : type)
-				.unwrapBlock('bulleted-list')
-				.unwrapBlock('numbered-list');
-			} else {
-				change.setBlock(isActive ? DEFAULT_NODE : type);
-			}
-		} else {
-			const isList = this.hasBlock('list-item');
-			const isType = state.blocks.some((block) => {
-			return !!document.getClosest(block.key, (parent) => parent.type == type);
-			});
-
-			if (isList && isType) {
-				change.setBlock(DEFAULT_NODE)
-				.unwrapBlock('bulleted-list')
-				.unwrapBlock('numbered-list');
-			} else if (isList) {
-				change.unwrapBlock(type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-				.wrapBlock(type);
-			} else {
-				change.setBlock('list-item')
-				.wrapBlock(type);
-			}
-		}
-		this.onChange(change);
-	}
-
-	renderToolbar() {
-		return (
-			<div className="menu toolbar-menu">
-			{this.renderMarkButton('bold', 'format_bold')}
-			{this.renderMarkButton('italic', 'format_italic')}
-			{this.renderMarkButton('underlined', 'format_underlined')}
-			{this.renderMarkButton('code', 'code')}
-			{this.renderBlockButton('heading-one', 'looks_one')}
-			{this.renderBlockButton('heading-two', 'looks_two')}
-			{this.renderBlockButton('block-quote', 'format_quote')}
-			{this.renderBlockButton('numbered-list', 'format_list_numbered')}
-			{this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
-			</div>
-		);
-	}
-
-	renderMarkButton(type, icon) {
-		const isActive = this.hasMark(type);
-		const onMouseDown = (e) => this.onClickMark(e, type);
-
-		return (
-			<span className="button" onMouseDown={onMouseDown} data-active={isActive}>
-			<span className="material-icons">{icon}</span>
-			</span>
-		);
-	}
-
-	renderBlockButton(type, icon) {
-		const isActive = this.hasBlock(type);
-		const onMouseDown = (e) => this.onClickBlock(e, type);
-
-		return (
-			<span className="button" onMouseDown={onMouseDown} data-active={isActive}>
-			<span className="material-icons">{icon}</span>
-			</span>
-		);
-	}
-
 	renderEditor() {
 		return (
 			<div className="editor">
@@ -175,8 +164,9 @@ class TextEditor extends Component {
 					state={this.state.content}
 					onChange={this.onChange}
 					onKeyDown={this.onKeyDown}
-					schema={schema}
-					placeholder={'Enter some rich text...'}
+					schema={this.schema}
+					plugins={plugins}
+					placeholder={'Enter some text...'}
 					spellCheck
 				/>
 			</div>
@@ -186,7 +176,6 @@ class TextEditor extends Component {
 	render() {
 		return (
 			<section className="modal">
-				{this.renderToolbar()}
 				{this.renderEditor()}
 			</section>
 		);

@@ -1,1 +1,1 @@
-npm run build && babel-node server
+web: npm run build && babel-node server

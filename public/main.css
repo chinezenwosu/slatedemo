@@ -42,12 +42,33 @@ li {
 
 span {
   margin: 2px 0;
-  display: inline-block; }
+  display: inline-block;
+}
 
 .list-icon {
   display: inline;
   margin-right: 10px; }
 
-/*# sourceMappingURL=main.css.map*/
+.textarea {
+  width: 100%;
+  font-size: 16px;
+  outline: none;
+  font-weight: 100;
+  border: none;
+}
+
+::-webkit-input-placeholder {
+  color: #d8d8d8;
+}
+::-moz-placeholder {
+  color: #d8d8d8;
+}
+:-ms-input-placeholder {
+  color: #d8d8d8;
+}
+:-moz-placeholder {
+  color: #d8d8d8;
+}
+
 
 /*# sourceMappingURL=main.css.map*/

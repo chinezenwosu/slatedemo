@@ -4,15 +4,6 @@
 			"kind": "block",
 			"type": "section",
 			"nodes": [{
-				"kind": "block",
-				"type": "title",
-				"nodes": [{
-					"kind": "text",
-					"ranges": [{
-							"text": "TITLE"
-						}]
-				}]
-			}, {
 					"kind": "block",
 					"type": "paragraph",
 					"nodes": [{
@@ -23,19 +14,11 @@
 								}]
 						}]
 				}]
-		}, {
+		},
+		{
 			"kind": "block",
 			"type": "section",
 			"nodes": [{
-				"kind": "block",
-				"type": "title",
-				"nodes": [{
-					"kind": "text",
-					"ranges": [{
-							"text": "CASE"
-						}]
-				}]
-			}, {
 				"kind": "block",
 				"type": "ul_list",
 				"nodes": [{

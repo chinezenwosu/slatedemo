@@ -20,8 +20,8 @@ class TextEditor extends Component {
 		super(props);
 		self = this;
 		this.state = {
-		content: State.fromJSON(initialState),
-		listItemsToggleStatus: [],
+			content: State.fromJSON(initialState),
+			listItemsToggleStatus: [],
 		};
 		this.schema = {
 			nodes: {
@@ -51,32 +51,6 @@ class TextEditor extends Component {
 				},
 			},
 			rules: [{
-				/* Rule that always makes the first block a title, normalizes by inserting one if no children, or setting the top to be a title */
-				match: (node) => node.kind === 'document',
-				validate: (document) => !document.nodes.size || document.nodes.first().type !== 'title' ? document.nodes : null,
-				normalize: (change, document, nodes) => {
-					if (!nodes.size) {
-						const title = Block.create({ type: 'title', data: {} });
-						return change.insertNodeByKey(document.key, 0, title);
-					}
-
-					return change.setNodeByKey(nodes.first().key, 'title');
-				},
-			}, {
-				/* Rule that only allows for one title, normalizes by making titles paragraphs */
-				match: (node) => node.kind === 'document',
-				validate: (document) => {
-					const invalidChildren = document.nodes.filter((child, index) => child.type === 'title' && index !== 0);
-					return invalidChildren.size ? invalidChildren : null;
-				},
-				normalize: (change, document, invalidChildren) => {
-					let updatedTransform = change;
-					invalidChildren.forEach((child) => {
-						updatedTransform = change.setNodeByKey(child.key, 'paragraph');
-					});
-					return updatedTransform;
-				},
-			}, {
 				/* Rule that forces at least one paragraph, normalizes by inserting an empty paragraph */
 				match: (node) => node.kind === 'document',
 				validate: (document) => document.nodes.size < 2 ? true : null,
@@ -176,6 +150,13 @@ class TextEditor extends Component {
 	render() {
 		return (
 			<section className="modal">
+				<h3>TITLE</h3>
+				<textarea
+					className="textarea"
+					placeholder="50M with h/o DM c/o substernal chest pain. Do I need an EKG?"
+				/>
+
+				<h3>CASE</h3>
 				{this.renderEditor()}
 			</section>
 		);

@@ -1,12 +1,16 @@
 body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 200;
+  background-color: aliceblue; }
+
+body {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-weight: 200; }
 
 section {
   position: relative;
   padding-top: 50px;
-  padding-bottom: 90px;
-}
+  padding-bottom: 90px; }
 
 /* The Modal (background) */
 .modal {
@@ -21,35 +25,29 @@ section {
   background-color: rgba(255, 255, 255, 0.95); }
 
 .editor > * > * + * {
-  margin-top: 1em;
-}
+  margin-top: 1em; }
 
 li {
-  list-style: none;
-}
-
+  list-style: none; }
 
 .parent-list-item {
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 .child-list-item {
-  font-weight: normal;
-}
+  font-weight: normal; }
 
 .list-toggle {
   height: 16px;
-  width: 16px;
-}
+  width: 16px; }
 
 span {
   margin: 2px 0;
-  display: inline-block;
-}
+  display: inline-block; }
+
 .list-icon {
   display: inline;
-  margin-right: 10px;
-}
+  margin-right: 10px; }
 
+/*# sourceMappingURL=main.css.map*/
 
 /*# sourceMappingURL=main.css.map*/

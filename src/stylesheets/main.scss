@@ -2,33 +2,58 @@
 @import './abstracts/mixins';
 @import './components/app';
 
+body {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 200; }
+
+section {
+  position: relative;
+  padding-top: 50px;
+  padding-bottom: 90px;
+}
+
+/* The Modal (background) */
+.modal {
+  z-index: 100;
+  margin: 50px auto;
+  padding: 10px;
+  align-self: center;
+  border: 2px solid #eeeeee;
+  width: 600px;
+  height: 500px;
+  overflow: auto;
+  background-color: rgba(255, 255, 255, 0.95); }
+
 .editor > * > * + * {
   margin-top: 1em;
 }
 
-.check-list-item + .check-list-item {
-  margin-top: 0;
+li {
+  list-style: none;
 }
 
-.check-list-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+
+.parent-list-item {
+  font-weight: bold;
 }
 
-.check-list-item.checked {
-  opacity: 0.666;
-  text-decoration: line-through;
+.child-list-item {
+  font-weight: normal;
 }
 
-.check-list-item > span:first-child {
-  margin-right: 0.75em;
+.list-toggle {
+  height: 16px;
+  width: 16px;
 }
 
-.check-list-item > span:last-child {
-  flex: 1;
+span {
+  margin: 2px 0;
+  display: inline-block;
+}
+.list-icon {
+  display: inline;
+  margin-right: 10px;
 }
 
-.check-list-item > span:last-child:focus {
-  outline: none;
-}
+
+/*# sourceMappingURL=main.css.map*/

@@ -12,22 +12,26 @@ section {
 .modal {
   z-index: 100;
   margin: 50px auto;
-  padding: 10px;
+  padding: 20px 25px;
   align-self: center;
-  border: 2px solid #eeeeee;
+  border: 1px solid #eeeeee;
   width: 600px;
-  height: 500px;
   overflow: auto;
-  background-color: rgba(255, 255, 255, 0.95); }
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.toolbar {
+  border-bottom: 1px solid #eeeeee;
+  padding: 5px 0 25px;
+}
 
 .editor > * > * + * {
   margin-top: 1em;
 }
 
 li {
-  list-style: none;
+  /*list-style: none;*/
 }
-
 
 .parent-list-item {
   font-weight: bold;
@@ -45,6 +49,7 @@ li {
 span {
   margin: 2px 0;
   display: inline-block;
+  font-family: system-ui;
 }
 
 .list-icon {
@@ -71,6 +76,46 @@ span {
 }
 :-moz-placeholder {
   color: #d8d8d8;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  margin: 0 -1px;
+  background: white;
+  transition: background 0.3s;
+  outline: none;
+  color: #858f9a;
+}
+
+button:hover {
+  background: #ccc;
+}
+
+button.active {
+  background: #d9edff;
+}
+
+.closed > ul {
+  display: none;
+}
+
+.parent-item {
+  list-style: none;
+  position: relative;
+}
+
+.parent-item img {
+  position: absolute;
+  margin: 0 0 0 -25px;
+  top: 5px;
+  cursor: pointer;
+}
+
+button.disabled {
+    opacity: 0.4;
+    cursor: auto;
 }
 
 

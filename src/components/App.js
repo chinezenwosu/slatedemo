@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { State } from 'slate';
+import { State, Block } from 'slate';
 import { Editor } from 'slate-react';
 import editList from 'slate-edit-list';
 import stateJson from './initialState.json';
@@ -48,11 +48,44 @@ class TextEditor extends Component {
         });
     }
 
+    moveNode(node, currentState, callback) {
+        const parentNode = currentState.document.getParent(node.key)
+        const indexToInsert = 0
+        let state = currentState
+            .change()
+            .deleteAtRange(currentState.selection)
+            .insertNodeByKey(parentNode.key, indexToInsert, node)
+            .deselect()
+            .apply()
+
+        callback(state)
+    }
+
+    onClickDrag(event, node) {
+        event.preventDefault()
+        
+        this.moveNode(node, this.state.state, (state) => {
+            let document = state.document;
+            let parent = document.getParent(node.key)
+            const index = parent.nodes.indexOf(node)
+            parent = parent.removeNode(index)
+            document = state.document.updateNode(parent)
+
+            // Update the document and selection.
+            state = state.set('document', document)
+            this.setState({ state: state })
+        })
+    }
+
     highlightedItems(props) {
         const { node, state } = props;
         const isCurrentItem = plugin.utils.getItemsAtRange(state).contains(node);
-        const depth = plugin.utils.getItemsAtRange(state)
+        const depth = plugin.utils.getItemDepth(state);
         const hasChildItems = props.children.length > 1
+
+        // Only make the first depth of list items draggable.
+        const parent = state.document.getParent(node.key)
+        const isDraggable = state.document.nodes.get('0').key === parent.key
 
         let classNames = isCurrentItem ? 'current-item' : '';
 
@@ -60,17 +93,21 @@ class TextEditor extends Component {
             classNames = this.state.parentItems[node.key] ? 'closed parent-item' : `${classNames} open parent-item`;
         }
 
+        const onMouseDown = event => this.onClickDrag(event, node)
+
         return (
             <li className={classNames}
                 title={isCurrentItem ? 'Current Item' : ''}
                 {...props.attributes}>
                 {
                     hasChildItems &&
-                    <img
-                        onClick={(event) => this.toggleListItem(event, node.key, state)}
-                        className='list-icon'
-                        src={this.state.parentItems[node.key] ? './img/arrow_right.svg' : './img/arrow_down.svg'}
-                    />
+                    <span className="list-icon">
+                        {isDraggable && <i onMouseDown={onMouseDown} className="drag-icon fa fa-bars"></i>}
+                        <img
+                            onClick={(event) => this.toggleListItem(event, node.key, state)}
+                            src={this.state.parentItems[node.key] ? './img/arrow_right.svg' : './img/arrow_down.svg'}
+                        />
+                    </span>
                 }
                 {props.children}
             </li>
@@ -131,17 +168,6 @@ class TextEditor extends Component {
                     state={this.state.state}
                     onChange={this.onChange}
                     schema={this.schema()}
-                    onDrop={(evt, data, state) => {
-                        console.log({evt, data, state})
-                        const newState = state
-                        .transform()
-                        .deselect()
-                        .select(data.target)
-                        .insertText(' Drop me in the text ')
-                        .apply()
-
-                        return newState
-                    }}
                 />
             </div>
         );

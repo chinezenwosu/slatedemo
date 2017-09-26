@@ -106,11 +106,15 @@ button.active {
   position: relative;
 }
 
-.parent-item img {
+.list-icon {
   position: absolute;
-  margin: 0 0 0 -25px;
+  margin: 0 0 0 -40px;
   top: 5px;
   cursor: pointer;
+}
+
+.list-icon .drag-icon {
+  margin-left: 5px;
 }
 
 button.disabled {

@@ -3,7 +3,7 @@
       "nodes": [
          {
             "kind": "block",
-            "type": "ul_list",
+            "type": "categories",
             "data": {
                "style": {
                   "listStyleType": "disc"
@@ -12,7 +12,7 @@
             "nodes": [
 							{
                   "kind": "block",
-                  "type": "list_item",
+                  "type": "name",
                   "nodes": [
                      {
                         "kind": "block",
@@ -30,7 +30,7 @@
                      },
                      {
                         "kind": "block",
-                        "type": "ul_list",
+                        "type": "categories",
                         "data": {
                            "style": {
                               "listStyleType": "disc"
@@ -39,7 +39,7 @@
                         "nodes": [
                            {
                               "kind": "block",
-                              "type": "list_item",
+                              "type": "name",
                               "nodes": [
                                  {
                                     "kind": "block",
@@ -59,7 +59,7 @@
                            },
                            {
                               "kind": "block",
-                              "type": "list_item",
+                              "type": "name",
                               "nodes": [
                                  {
                                     "kind": "block",
@@ -83,7 +83,7 @@
                },
                {
                   "kind": "block",
-                  "type": "list_item",
+                  "type": "name",
                   "nodes": [
                      {
                         "kind": "block",
@@ -101,7 +101,7 @@
                      },
                      {
                         "kind": "block",
-                        "type": "ul_list",
+                        "type": "categories",
                         "data": {
                            "style": {
                               "listStyleType": "disc"
@@ -110,7 +110,7 @@
                         "nodes": [
                            {
                               "kind": "block",
-                              "type": "list_item",
+                              "type": "name",
                               "nodes": [
                                  {
                                     "kind": "block",
@@ -130,7 +130,7 @@
                            },
                            {
                               "kind": "block",
-                              "type": "list_item",
+                              "type": "name",
                               "nodes": [
                                  {
                                     "kind": "block",

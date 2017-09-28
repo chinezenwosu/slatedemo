@@ -1,11 +1,17 @@
 body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
-  font-weight: 200; }
+  font-weight: 200;
+  color: #534d58;
+}
 
 section {
   position: relative;
   padding-top: 50px;
   padding-bottom: 90px;
+}
+
+h3 {
+  font-weight: 400;
 }
 
 /* The Modal (background) */
@@ -50,6 +56,7 @@ span {
   margin: 2px 0;
   display: inline-block;
   font-family: system-ui;
+  font-size: 14px;
 }
 
 .list-icon {
@@ -59,7 +66,7 @@ span {
 
 .textarea {
   width: 100%;
-  font-size: 16px;
+  font-size: 14px;
   outline: none;
   font-weight: 100;
   border: none;
@@ -108,18 +115,61 @@ button.active {
 
 .list-icon {
   position: absolute;
-  margin: 0 0 0 -40px;
+  margin: 0 0 0 -25px;
   top: 5px;
   cursor: pointer;
 }
 
-.list-icon .drag-icon {
-  margin-left: 5px;
+.drag-icon {
+  position: relative;
+  cursor: move;
+}
+
+.drag-icon span {
+  /*margin-left: -20px;*/
+  margin-left: -40px;
+  font-weight: 900;
+  position: absolute;
 }
 
 button.disabled {
     opacity: 0.4;
     cursor: auto;
+}
+
+.text-input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 14px;
+    outline: none;
+    border: none;
+    font-weight: 100;
+}
+
+.text-input::-webkit-input-placeholder {
+  color: #23afff;
+}
+.text-input::-moz-placeholder {
+  color: #23afff;
+}
+.text-input:-ms-input-placeholder {
+  color: #23afff;
+}
+.text-input:-moz-placeholder {
+  color: #23afff;
+}
+
+.text-input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+.text-input:focus::-moz-placeholder {
+  color: transparent;
+}
+.text-input:focus:-ms-input-placeholder {
+  color: transparent;
+}
+.text-input:focus:-moz-placeholder {
+  color: transparent;
 }
 
 

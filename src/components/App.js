@@ -4,8 +4,14 @@ import { State, Block } from 'slate';
 import { Editor } from 'slate-react';
 import editList from 'slate-edit-list';
 import stateJson from './initialState.json';
+import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
+import immutable from 'immutable';
 
-const plugin = editList();
+const options = {
+    types: ['categories'],
+    typeItem: 'name'
+}
+const plugin = editList(options);
 const plugins = [plugin];
 
 // To update the highlighting of nodes inside the selection
@@ -37,7 +43,7 @@ class TextEditor extends Component {
     }
 
     toggleListItem(event, key, state) {
-        let parentItems = self.state.parentItems;
+        let parentItems = this.state.parentItems;
         parentItems[key] = !this.state.parentItems[key];
 
         // Hack to focus on editor or this would not work until one of the items is clicked.
@@ -48,33 +54,33 @@ class TextEditor extends Component {
         });
     }
 
-    moveNode(node, currentState, callback) {
-        const parentNode = currentState.document.getParent(node.key)
-        const indexToInsert = 0
-        let state = currentState
-            .change()
-            .deleteAtRange(currentState.selection)
-            .insertNodeByKey(parentNode.key, indexToInsert, node)
-            .deselect()
-            .apply()
-
-        callback(state)
+    swapNodes(nodes, firstIndex, secondIndex) {
+        return nodes.map((element, index) => {
+            if (index === firstIndex) return nodes.get(secondIndex);
+            else if (index === secondIndex) return nodes.get(firstIndex);
+            else return element;
+        })
     }
 
-    onClickDrag(event, node) {
-        event.preventDefault()
-        
-        this.moveNode(node, this.state.state, (state) => {
-            let document = state.document;
-            let parent = document.getParent(node.key)
-            const index = parent.nodes.indexOf(node)
-            parent = parent.removeNode(index)
-            document = state.document.updateNode(parent)
+    onSortEnd(props, {oldIndex, newIndex}) {
+        let { node, state } = props
+        let document = state.document
+        let updatedParentNodes = this.swapNodes(node.nodes, oldIndex, newIndex)
 
-            // Update the document and selection.
-            state = state.set('document', document)
-            this.setState({ state: state })
-        })
+        let updatedParent = node.set('nodes', updatedParentNodes)
+        document = document.updateNode(updatedParent)
+
+
+        state = state.set('document', document)
+        this.setState({ state: state })
+    }
+
+    highlightedList(props) {
+        const SortableList = SortableContainer(() =>
+            <ul {...props.attributes}>{props.children}</ul>
+        )
+
+        return <SortableList onSortMove={() => this.editor.blur()} onSortEnd={this.onSortEnd.bind(this, props)} lockAxis={'y'} useDragHandle />
     }
 
     highlightedItems(props) {
@@ -86,6 +92,7 @@ class TextEditor extends Component {
         // Only make the first depth of list items draggable.
         const parent = state.document.getParent(node.key)
         const isDraggable = state.document.nodes.get('0').key === parent.key
+        const index = parent.nodes.indexOf(node)
 
         let classNames = isCurrentItem ? 'current-item' : '';
 
@@ -93,16 +100,16 @@ class TextEditor extends Component {
             classNames = this.state.parentItems[node.key] ? 'closed parent-item' : `${classNames} open parent-item`;
         }
 
-        const onMouseDown = event => this.onClickDrag(event, node)
+        const DragHandle = SortableHandle(() => <span>::</span>);
 
-        return (
+        const SortableItem = SortableElement(() =>
             <li className={classNames}
                 title={isCurrentItem ? 'Current Item' : ''}
                 {...props.attributes}>
+                <div className='drag-icon'><DragHandle /></div>
                 {
                     hasChildItems &&
                     <span className="list-icon">
-                        {isDraggable && <i onMouseDown={onMouseDown} className="drag-icon fa fa-bars"></i>}
                         <img
                             onClick={(event) => this.toggleListItem(event, node.key, state)}
                             src={this.state.parentItems[node.key] ? './img/arrow_right.svg' : './img/arrow_down.svg'}
@@ -111,15 +118,18 @@ class TextEditor extends Component {
                 }
                 {props.children}
             </li>
+        )
+
+        return (
+            <SortableItem className={classNames} index={index} />
         );
-    };
+    }
 
     schema() {
         return {
             nodes: {
-                ul_list:   props => <ul {...props.attributes}>{props.children}</ul>,
-                ol_list:   props => <ol {...props.attributes}>{props.children}</ol>,
-                list_item: props => this.highlightedItems(props)
+                categories:   props => this.highlightedList(props),
+                name: props => this.highlightedItems(props)
             }
         }
     }
@@ -148,11 +158,51 @@ class TextEditor extends Component {
         );
     }
 
+    handleEnterInput(event) {
+        if (event.key === 'Enter') {
+            const currentState = self.state.state
+            const parentNode = currentState.document.nodes.get('0')
+            const indexToInsert = parentNode.nodes.size
+            let listNode = 
+            {
+                "kind": "block",
+                "type": "name",
+                "nodes": [
+                    {
+                        "kind": "block",
+                        "type": "paragraph",
+                        "nodes": [
+                            {
+                                "kind": "text",
+                                "ranges": [
+                                    {
+                                    "text": event.target.value
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+
+            let state = currentState
+                .change()
+                .insertNodeByKey(parentNode.key, indexToInsert, listNode)
+                .apply()
+
+            self[event.target.id].value = ''
+            self[event.target.id].blur()
+            self.setState({ state: state })
+        }
+    }
+
     render() {
+        let categories = ['symptom', 'medication', 'medical/surgical history', 'family/social history', 'physical exam', 'lab/radiology']
+
         return (
             <div className="modal">
                 {this.renderToolbar()}
-                <h3>TITLE</h3>
+                <h3>CASE TITLE</h3>
                 <textarea
                     value="13 year old with a Type 1 Diabetes presenting high glucose level and heart rate."
                     onChange={() => {}}
@@ -169,70 +219,27 @@ class TextEditor extends Component {
                     onChange={this.onChange}
                     schema={this.schema()}
                 />
+
+                <div className="ontology-observations">
+                    {
+                        categories.map((category, index) => {
+                            return (
+                                <input
+                                    key={category}
+                                    id={`searchInput${index}`}
+                                    ref={(searchInput) => { this[`searchInput${index}`] = searchInput; }}
+                                    type="text"
+                                    onKeyPress={this.handleEnterInput}
+                                    className="text-input"
+                                    placeholder={`+ Add ${category}`}
+                                />
+                            )
+                        })
+                    }
+                </div>
             </div>
         );
     }
 };
 
 export default TextEditor;
-
-
-/*import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Editor } from 'slate-react';
-import Plain from 'slate-plain-serializer';
-
-class MyEditor extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      state: Plain.deserialize('A bit of content in a Slate editor.')
-    }
-  }
-
-  onChange({ state }) {
-    this.setState({ state })
-  }
-
-  render() {
-    return (
-      <div>   
-        <div 
-          style={{ 
-          	background: 'black', 
-            color: 'white', 
-            width: 150, 
-            height: 20, 
-            textAlign: 'center',
-            marginBottom: 20
-           }} 
-          draggable
-          onDragStart={evt => {
-          	evt.dataTransfer.setData('text/plain', ' ')
-         	}}
-        >Drop me in the text</div>
-        <Editor
-          placeholder="Enter some text..."
-          
-          onChange={state => this.onChange(state)}
-          onDrop={(evt, data, state) => {
-          	console.log({evt, data, state})
-            const newState = state
-            .transform()
-            .deselect()
-            .select(data.target)
-            .insertText(' Drop me in the text ')
-            .apply()
-
-						return newState
-          }}
-          state={this.state.state}
-        />
-    	</div>
-    )
-  }
-
-}
-
-export default MyEditor;*/

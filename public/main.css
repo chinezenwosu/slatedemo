@@ -34,7 +34,7 @@ h3 {
   margin-top: 1em; }
 
 li {
-  /*list-style: none;*/
+  list-style: none;
 }
 
 .parent-list-item {
@@ -96,6 +96,10 @@ button:hover {
 
 button.active {
   background: #d9edff;
+}
+
+ul {
+  padding-left: 20px;
 }
 
 .closed > ul {

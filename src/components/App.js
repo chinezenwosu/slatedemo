@@ -80,33 +80,41 @@ class TextEditor extends Component {
             <ul {...props.attributes}>{props.children}</ul>
         )
 
-        return <SortableList onSortMove={() => this.editor.blur()} onSortEnd={this.onSortEnd.bind(this, props)} lockAxis={'y'} useDragHandle />
+        return (
+            <SortableList
+                onSortMove={() => this.editor.blur()}
+                onSortEnd={this.onSortEnd.bind(this, props)}
+                lockAxis={'y'}
+                lockToContainerEdges
+                useDragHandle
+            />
+        )
     }
 
     highlightedItems(props) {
         const { node, state } = props;
-        const isCurrentItem = plugin.utils.getItemsAtRange(state).contains(node);
-        const depth = plugin.utils.getItemDepth(state);
+        const isCurrentItem = plugin.utils.getItemsAtRange(state).contains(node)
+        const depth = plugin.utils.getItemDepth(state)
         const hasChildItems = props.children.length > 1
 
         // Only make the first depth of list items draggable.
         const parent = state.document.getParent(node.key)
-        const isDraggable = state.document.nodes.get('0').key === parent.key
         const index = parent.nodes.indexOf(node)
+        const isDraggable = parent.nodes.size > 1
 
-        let classNames = isCurrentItem ? 'current-item' : '';
+        let classNames = isCurrentItem ? 'current-item' : ''
 
         if (hasChildItems) {
             classNames = this.state.parentItems[node.key] ? 'closed parent-item' : `${classNames} open parent-item`;
         }
 
-        const DragHandle = SortableHandle(() => <span>::</span>);
+        const DragHandle = SortableHandle(() => <span onMouseOver={() => this.editor.blur()}>::</span>);
 
         const SortableItem = SortableElement(() =>
             <li className={classNames}
                 title={isCurrentItem ? 'Current Item' : ''}
                 {...props.attributes}>
-                <div className='drag-icon'><DragHandle /></div>
+                {isDraggable && <div className='drag-icon'><DragHandle /></div>}
                 {
                     hasChildItems &&
                     <span className="list-icon">

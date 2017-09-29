@@ -106,13 +106,17 @@ class TextEditor extends Component {
         let classNames = isCurrentItem ? 'current-item' : ''
         const ParentDragHandle = SortableHandle(() => {
             return (
-                <span className="list-icon">
+                <span className="list-icon" contentEditable={false}>
                     <img
                         onClick={(event) => this.toggleListItem(event, node.key, state)}
                         onMouseMove={() => this.editor.blur()}
                         draggable={false}
                         src={this.state.parentItems[node.key] ? './img/arrow_right.svg' : './img/arrow_down.svg'}
                     />
+                    <div className="icon-hover">
+                        <span><strong>Drag</strong> to move</span>
+                        <span><strong>Click</strong> to open menu</span>
+                    </div>
                 </span>
             ) 
         })

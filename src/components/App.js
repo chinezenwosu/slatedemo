@@ -87,6 +87,7 @@ class TextEditor extends Component {
                 lockAxis={'y'}
                 lockToContainerEdges
                 useDragHandle
+                distance={5}
             />
         )
     }
@@ -100,29 +101,41 @@ class TextEditor extends Component {
         // Only make the first depth of list items draggable.
         const parent = state.document.getParent(node.key)
         const index = parent.nodes.indexOf(node)
+        const isFirstParent = state.document.nodes.get('0').key === parent.key
         const isDraggable = parent.nodes.size > 1
-
         let classNames = isCurrentItem ? 'current-item' : ''
+        const ParentDragHandle = SortableHandle(() => {
+            return (
+                <span className="list-icon">
+                    <img
+                        onClick={(event) => this.toggleListItem(event, node.key, state)}
+                        onMouseMove={() => this.editor.blur()}
+                        draggable={false}
+                        src={this.state.parentItems[node.key] ? './img/arrow_right.svg' : './img/arrow_down.svg'}
+                    />
+                </span>
+            ) 
+        })
+
+        const DragHandle = SortableHandle(() => <span onMouseOver={() => this.editor.blur()}>:::</span>);
 
         if (hasChildItems) {
             classNames = this.state.parentItems[node.key] ? 'closed parent-item' : `${classNames} open parent-item`;
         }
-
-        const DragHandle = SortableHandle(() => <span onMouseOver={() => this.editor.blur()}>::</span>);
+        classNames = isFirstParent ? `${classNames} first-parent-item` : classNames
 
         const SortableItem = SortableElement(() =>
             <li className={classNames}
                 title={isCurrentItem ? 'Current Item' : ''}
                 {...props.attributes}>
-                {isDraggable && <div className='drag-icon'><DragHandle /></div>}
+                {hasChildItems && <ParentDragHandle />}
+                {!hasChildItems && isDraggable && <div className='drag-icon'><DragHandle /></div>}
                 {
+                    isDraggable &&
                     hasChildItems &&
-                    <span className="list-icon">
-                        <img
-                            onClick={(event) => this.toggleListItem(event, node.key, state)}
-                            src={this.state.parentItems[node.key] ? './img/arrow_right.svg' : './img/arrow_down.svg'}
-                        />
-                    </span>
+                    <div className='drag-icon'>
+                        <span contentEditable={false}>:::</span>
+                    </div>
                 }
                 {props.children}
             </li>

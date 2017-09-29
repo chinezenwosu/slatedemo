@@ -52,6 +52,8 @@ span {
   display: inline-block;
   font-family: system-ui;
   font-size: 14px;
+  margin-left: -25px;
+  padding-left: 25px;
 }
 
 .list-icon {
@@ -111,23 +113,54 @@ ul {
   position: relative;
 }
 
+.parent-item.first-parent-item {
+  margin-bottom: 5px;
+}
+
+.parent-item.first-parent-item > div span span {
+  font-weight: 500;
+}
+
 .list-icon {
   position: absolute;
-  margin: 0 0 0 -25px;
+  margin: 0 0 0 -50px;
   top: 5px;
+  opacity: 0.5;
+  z-index: 2;
   cursor: pointer;
 }
 
 .drag-icon {
   position: relative;
   cursor: move;
+  opacity: 0.5;
+  z-index: 2;  
 }
 
 .drag-icon span {
-  /*margin-left: -20px;*/
-  margin-left: -40px;
-  font-weight: 900;
+  font-weight: 400;
   position: absolute;
+  background: #cccccc;
+  padding: 0 3px 4px;
+  line-height: 0.9;
+  border-radius: 2px;
+  transform: rotate(90deg);
+  margin: 5px;
+  margin-left: -25px;
+}
+
+li > div.drag-icon span,
+.parent-item:hover > div.drag-icon span {
+  display: none;
+}
+
+body > li > div.drag-icon span,
+li:hover > div.drag-icon span {
+  display: inline;
+}
+
+body > li > .list-icon {
+  display: none;
 }
 
 button.disabled {

@@ -21,7 +21,6 @@ h3 {
   align-self: center;
   border: 1px solid #eeeeee;
   width: 600px;
-  overflow: auto;
   background-color: rgba(255, 255, 255, 0.95);
 }
 
@@ -92,6 +91,10 @@ button {
   color: #858f9a;
 }
 
+button.submit {
+  margin-top: 20px;
+}
+
 button:hover {
   background: #ccc;
 }
@@ -102,6 +105,7 @@ button.active {
 
 ul {
   padding-left: 20px;
+  margin: 0;
 }
 
 .closed > ul {
@@ -164,8 +168,8 @@ li > div.drag-icon span,
   border-radius: 2px;
   text-align: center;
   margin-left: -45px;
-  margin-top: -23px;
-  position: fixed;
+  width: max-content;
+  position: absolute;
   display: none;
 }
 

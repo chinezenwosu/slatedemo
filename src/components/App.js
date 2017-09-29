@@ -70,7 +70,6 @@ class TextEditor extends Component {
         let updatedParent = node.set('nodes', updatedParentNodes)
         document = document.updateNode(updatedParent)
 
-
         state = state.set('document', document)
         this.setState({ state: state })
     }
@@ -103,7 +102,9 @@ class TextEditor extends Component {
         const index = parent.nodes.indexOf(node)
         const isFirstParent = state.document.nodes.get('0').key === parent.key
         const isDraggable = parent.nodes.size > 1
+        const isMinimized = this.state.parentItems[node.key]
         let classNames = isCurrentItem ? 'current-item' : ''
+
         const ParentDragHandle = SortableHandle(() => {
             return (
                 <span className="list-icon" contentEditable={false}>
@@ -115,7 +116,7 @@ class TextEditor extends Component {
                     />
                     <div className="icon-hover">
                         <span><strong>Drag</strong> to move</span>
-                        <span><strong>Click</strong> to open menu</span>
+                        <span><strong>Click</strong> to {isMinimized ? 'open' : 'close'} menu</span>
                     </div>
                 </span>
             ) 
@@ -124,7 +125,7 @@ class TextEditor extends Component {
         const DragHandle = SortableHandle(() => <span onMouseOver={() => this.editor.blur()}>:::</span>);
 
         if (hasChildItems) {
-            classNames = this.state.parentItems[node.key] ? 'closed parent-item' : `${classNames} open parent-item`;
+            classNames = isMinimized ? `${classNames} closed parent-item` : `${classNames} open parent-item`;
         }
         classNames = isFirstParent ? `${classNames} first-parent-item` : classNames
 

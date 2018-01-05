@@ -5,6 +5,7 @@ import { Editor } from 'slate-react';
 import editList from 'slate-edit-list';
 import stateJson from './initialState.json';
 import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import immutable from 'immutable';
 
 const options = {
@@ -223,19 +224,8 @@ class TextEditor extends Component {
     }
 
     render() {
-        let categories = ['symptom', 'medication', 'medical/surgical history', 'family/social history', 'physical exam', 'lab/radiology']
-
         return (
             <div className="modal">
-                {this.renderToolbar()}
-                <h3>CASE TITLE</h3>
-                <textarea
-                    value="13 year old with a Type 1 Diabetes presenting high glucose level and heart rate."
-                    onChange={() => {}}
-                    className="textarea"
-                    placeholder="50M with h/o DM c/o substernal chest pain. Do I need an EKG?"
-                />
-
                 <h3>CASE</h3>
                 <Editor
                     placeholder={'Enter some text...'}
@@ -245,27 +235,159 @@ class TextEditor extends Component {
                     onChange={this.onChange}
                     schema={this.schema()}
                 />
-
-                <div className="ontology-observations">
-                    {
-                        categories.map((category, index) => {
-                            return (
-                                <input
-                                    key={category}
-                                    id={`searchInput${index}`}
-                                    ref={(searchInput) => { this[`searchInput${index}`] = searchInput; }}
-                                    type="text"
-                                    onKeyPress={this.handleEnterInput}
-                                    className="text-input"
-                                    placeholder={`+ Add ${category}`}
-                                />
-                            )
-                        })
-                    }
-                </div>
             </div>
         );
     }
 };
 
-export default TextEditor;
+
+const getItems = count => {
+    const list = Array.from({ length: count }, (v, k) => k).map(k => ({
+        id: `item-${k}`,
+        content: `item ${k}`,
+    }));
+    return {
+        "list-1": list.splice(0, 5),
+        "list-2": list
+    }
+}
+
+// using some little inline style helpers to make the app look okay
+const grid = 8;
+const getItemStyle = (draggableStyle, isDragging) => {
+    return Object.assign({
+        userSelect: 'none',
+        padding: grid * 2,
+        margin: `0 0 ${grid}px 0`,
+
+        // change background colour if dragging
+        background: isDragging ? 'lightgreen' : 'grey',
+    }, draggableStyle)
+};
+const getListStyle = isDraggingOver => ({
+  background: isDraggingOver ? 'lightblue' : 'lightgrey',
+  padding: grid,
+  width: 250,
+  display: 'inline-block',
+});
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: getItems(10),
+    };
+    this.onDragEnd = this.onDragEnd.bind(this);
+  }
+
+    // a little function to help us with reordering the result
+    reorder(list, result) {
+        const { source, destination } = result;
+
+        const destinationIndex = destination.index;
+        const destinationListName = destination.droppableId;
+        const destinationList = list[destinationListName];
+        
+        const sourceIndex = source.index;
+        const sourceListName = source.droppableId;
+        const sourceList = list[sourceListName];
+        const [removed] = sourceList.splice(sourceIndex, 1);
+
+        destinationList.splice(destinationIndex, 0, removed);
+        list[sourceListName] = sourceList;
+        list[destinationListName] = destinationList;
+
+        return list;
+    };
+
+    onDragEnd(result) {
+        // dropped outside the list
+        if (!result.destination) {
+            return;
+        }
+
+        console.log("result", result)
+
+        const items = this.reorder(
+            this.state.items,
+            result
+        );
+
+        this.setState({
+            items,
+        });
+    }
+
+  // Normally you would want to split things out into separate components.
+  // But in this example everything is just done in one place for simplicity
+  render() {
+      console.log("this.state.items", this.state.items)
+    return (
+      <DragDropContext onDragEnd={this.onDragEnd}>
+          <div>
+        <Droppable droppableId="list-1">
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
+            >
+            {this.state.items["list-1"].map(item => (
+                <Draggable key={item.id} draggableId={item.id}>
+                  {(provided, snapshot) => (
+                    <div>
+                      <div
+                        ref={provided.innerRef}
+                        style={getItemStyle(
+                          provided.draggableStyle,
+                          snapshot.isDragging
+                        )}
+                        
+                        {...provided.dragHandleProps}
+                      >
+                        {item.content}
+                      </div>
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+        <Droppable droppableId="list-2">
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
+            >
+              {this.state.items["list-2"].map(item => (
+                <Draggable key={item.id} draggableId={item.id}>
+                  {(provided, snapshot) => (
+                    <div>
+                      <div
+                        ref={provided.innerRef}
+                        style={getItemStyle(
+                          provided.draggableStyle,
+                          snapshot.isDragging
+                        )}
+                        {...provided.dragHandleProps}
+                      >
+                        {item.content}
+                      </div>
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+        </div>
+      </DragDropContext>
+    );
+  }
+}
+
+export default App;

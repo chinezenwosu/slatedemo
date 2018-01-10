@@ -69,12 +69,77 @@ class TextEditor extends Component {
         this.setState({ state: state })
     }
 
+    onDragEnd(props, result) {
+        if (!result.destination) {
+            return;
+        }
+
+        const { source, destination, draggableId } = result;
+
+        const destinationIndex = destination.index;
+        const destinationKey = destination.droppableId;
+        
+        // const sourceIndex = source.index;
+        // const sourceKey = source.droppableId;
+
+        // const { node } = props;
+        // const firstNode = node.nodes.get(sourceIndex);
+
+        console.log("result", result)
+        console.log("props", props.node.key)
+
+
+        this.editor.change((change) => {
+            change.moveNodeByKey(draggableId, destinationKey, destinationIndex);
+            this.onChange(change)
+        });
+    }
+
     highlightedList(props) {
         const {node, editor} = props;
         const value = editor.value
         const parent = value.document.getParent(node.key);
-        console.log("node", parent.kind)
-        return <ul {...props.attributes}>{props.children}</ul>
+        const grid = 8;
+        const isDocument = parent.kind === "document";
+        const getListStyle = isDraggingOver => ({
+            background: isDraggingOver ? 'white' : '',
+            // padding: grid,
+            // display: 'inline-block',
+        });
+
+        {/*<Droppable droppableId={node.key}>
+            {(provided, snapshot) => (
+                <div
+                    ref={provided.innerRef}
+                    className="observation-edit-list"
+                    style={getListStyle(snapshot.isDraggingOver)}
+                    {...props.attributes}
+                >
+                    {props.children}
+                    {provided.placeholder}
+                </div>
+            )}
+        </Droppable>*/}
+        const droppableList = (
+            <Droppable droppableId={node.key}>
+                {(provided, snapshot) => (
+                    <div ref={provided.innerRef} className="observation-edit-list" style={getListStyle(snapshot.isDraggingOver)}>
+                        {props.children}
+                        {provided.placeholder}
+                    </div>
+                )}
+            </Droppable>
+        );
+
+        if (isDocument) {
+            return (
+                <DragDropContext onDragEnd={this.onDragEnd.bind(this, props)}>
+                    {droppableList}
+                </DragDropContext>
+            );
+        }
+
+        return droppableList;
     }
 
     highlightedItems(props) {
@@ -90,7 +155,7 @@ class TextEditor extends Component {
         const isFirstParent = value.document.nodes.get('0').key === parent.key
         const isDraggable = parent.nodes.size > 1
         const isMinimized = this.state.parentItems[node.key]
-        let classNames = isCurrentItem ? 'current-item' : ''
+        let classNames = isCurrentItem ? 'current-item edit-list-item' : 'edit-list-item'
 
         const ParentDragHandle = (
             <span className="list-icon" contentEditable={false}>
@@ -112,22 +177,58 @@ class TextEditor extends Component {
         }
         classNames = isFirstParent ? `${classNames} first-parent-item` : classNames
 
+        const getItemStyle = (draggableStyle, isDragging) => {
+            return Object.assign({
+                userSelect: isDragging ? 'none' : 'unset',
+                // padding: grid * 2,
+                // margin: `0 0 ${grid}px 0`,
+
+                // change background colour if dragging
+                background: isDragging ? 'white' : '',
+            }, draggableStyle)
+        };
+
+        {/*<li className={classNames}
+            title={isCurrentItem ? 'Current Item' : ''}
+            {...props.attributes}>
+            {hasChildItems && ParentDragHandle}
+            {!hasChildItems && isDraggable && <div className='drag-icon'><span onMouseOver={() => this.editor.blur()}>:::</span></div>}
+            {
+                isDraggable &&
+                hasChildItems &&
+                <div className='drag-icon'>
+                    <span contentEditable={false}>:::</span>
+                </div>
+            }
+            {props.children}
+        </li>*/}
         return (
-            <li className={classNames}
-                title={isCurrentItem ? 'Current Item' : ''}
-                {...props.attributes}>
-                {hasChildItems && ParentDragHandle}
-                {!hasChildItems && isDraggable && <div className='drag-icon'><span onMouseOver={() => this.editor.blur()}>:::</span></div>}
-                {
-                    isDraggable &&
-                    hasChildItems &&
-                    <div className='drag-icon'>
-                        <span contentEditable={false}>:::</span>
+            <Draggable key={node.key} draggableId={node.key}>
+                {(provided, snapshot) => (
+                    <div
+                        className={classNames}
+                        ref={provided.innerRef}
+                        style={getItemStyle(
+                            provided.draggableStyle,
+                            snapshot.isDragging
+                        )}
+                        {...props.attributes}
+                    >
+                        <div className="observation-drag-handle" {...provided.dragHandleProps}>
+                            {hasChildItems && ParentDragHandle}
+                            {!hasChildItems && isDraggable && <div className='drag-icon'><span onMouseOver={() => this.editor.blur()}>:::</span></div>}
+                            {
+                                isDraggable &&
+                                hasChildItems &&
+                                <div className='drag-icon'>
+                                    <span contentEditable={false}>:::</span>
+                                </div>
+                            }
+                        </div>
+                        {props.children}
                     </div>
-                }
-                {console.log("props.children", props.children)}
-                {props.children}
-            </li>
+                )}
+            </Draggable>
         );
     }
 
@@ -178,8 +279,6 @@ class TextEditor extends Component {
     }
 
     render() {
-        console.log("this.state", this.state)
-        console.log("this.state.state", !this.state.value)
         if (!this.state.value) {
             return <span>Loading...</span>
         }

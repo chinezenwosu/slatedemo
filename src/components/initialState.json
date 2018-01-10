@@ -1,159 +1,126 @@
 {
-   "document": {
-      "nodes": [
-         {
+    "document": {
+        "nodes": [{
             "kind": "block",
-            "type": "categories",
+            "type": "list",
             "data": {
-               "style": {
-                  "listStyleType": "disc"
-               }
+                "style": {
+                    "listStyleType": "disc"
+                }
             },
-            "nodes": [
-							{
-                  "kind": "block",
-                  "type": "name",
-                  "nodes": [
-                     {
+            "nodes": [{
+                "kind": "block",
+                "type": "paragraph",
+                "nodes": [{
+                    "kind": "text",
+                    "leaves": [
+                        {
+                            "text": "Input case here"
+                        }
+                    ]
+                }]
+            },{
+                "kind": "block",
+                "type": "entity",
+                "nodes": [{
+                    "kind": "block",
+                    "type": "paragraph",
+                    "nodes": [{
+                        "kind": "text",
+                        "leaves": [{
+                            "text": "Input findings here"
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "list",
+                    "data": {
+                    "style": {
+                        "listStyleType": "disc"
+                    }
+                    },
+                    "nodes": [{
                         "kind": "block",
-                        "type": "paragraph",
-                        "nodes": [
-                           {
-                              "kind": "text",
-                              "ranges": [
-                                 {
-                                    "text": "Sharp lower abdominal pain"
-                                 }
-                              ]
-                           }
-                        ]
-                     },
-                     {
+                        "type": "entity",
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "nodes": [{
+                                "kind": "text",
+                                "leaves": [{
+                                    "text": "Hit [TAB] to add details"
+                                }]
+                            }]
+                        }]
+                    },
+                    {
                         "kind": "block",
-                        "type": "categories",
-                        "data": {
-                           "style": {
-                              "listStyleType": "disc"
-                           }
-                        },
-                        "nodes": [
-                           {
-                              "kind": "block",
-                              "type": "name",
-                              "nodes": [
-                                 {
-                                    "kind": "block",
-                                    "type": "paragraph",
-                                    "nodes": [
-                                       {
-                                          "kind": "text",
-                                          "ranges": [
-                                             {
-                                                "text": "Subregion: Lower"
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           },
-                           {
-                              "kind": "block",
-                              "type": "name",
-                              "nodes": [
-                                 {
-                                    "kind": "block",
-                                    "type": "paragraph",
-                                    "nodes": [
-                                       {
-                                          "kind": "text",
-                                          "ranges": [
-                                             {
-                                                "text": "Sensation: Sharp"
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ]
-                     }
-                  ]
-               },
-               {
-                  "kind": "block",
-                  "type": "name",
-                  "nodes": [
-                     {
+                        "type": "entity",
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "nodes": [{
+                                "kind": "text",
+                                "leaves": [{
+                                    "text": "Add more details"
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            },
+            {
+                "kind": "block",
+                "type": "entity",
+                "nodes": [{
+                    "kind": "block",
+                    "type": "paragraph",
+                    "nodes": [{
+                        "kind": "text",
+                        "leaves": [{
+                            "text": "Heart Murmur"
+                        }]
+                    }]
+                },
+                {
+                    "kind": "block",
+                    "type": "list",
+                    "data": {
+                        "style": {
+                            "listStyleType": "disc"
+                        }
+                    },
+                    "nodes": [{
                         "kind": "block",
-                        "type": "paragraph",
-                        "nodes": [
-                           {
-                              "kind": "text",
-                              "ranges": [
-                                 {
-                                    "text": "Heart Murmur"
-                                 }
-                              ]
-                           }
-                        ]
-                     },
-                     {
+                        "type": "entity",
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "nodes": [{
+                                "kind": "text",
+                                "leaves": [{
+                                    "text": "Detail: Soft midsystolic murmur at the second left intercostal space."
+                                }]
+                            }]
+                        }]
+                    },
+                    {
                         "kind": "block",
-                        "type": "categories",
-                        "data": {
-                           "style": {
-                              "listStyleType": "disc"
-                           }
-                        },
-                        "nodes": [
-                           {
-                              "kind": "block",
-                              "type": "name",
-                              "nodes": [
-                                 {
-                                    "kind": "block",
-                                    "type": "paragraph",
-                                    "nodes": [
-                                       {
-                                          "kind": "text",
-                                          "ranges": [
-                                             {
-                                                "text": "Detail: Soft midsystolic murmur at the second left intercostal space."
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           },
-                           {
-                              "kind": "block",
-                              "type": "name",
-                              "nodes": [
-                                 {
-                                    "kind": "block",
-                                    "type": "paragraph",
-                                    "nodes": [
-                                       {
-                                          "kind": "text",
-                                          "ranges": [
-                                             {
-                                                "text": "Finding: A separate holosystolic murmur at the apex."
-                                             }
-                                          ]
-                                       }
-                                    ]
-                                 }
-                              ]
-                           }
-                        ]
-                     }
-                  ]
-               }
-            ]
-         }
-      ]
-   }
+                        "type": "entity",
+                        "nodes": [{
+                            "kind": "block",
+                            "type": "paragraph",
+                            "nodes": [{
+                                "kind": "text",
+                                "leaves": [{
+                                    "text": "Finding: A separate holosystolic murmur at the apex."
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+    }
 }

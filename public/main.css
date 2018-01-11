@@ -34,11 +34,6 @@ h3 {
   margin-top: 1em;
 }
 
-li {
-  list-style: none;
-  background: #ffffff;
-}
-
 .parent-list-item {
   font-weight: bold;
 }
@@ -66,56 +61,12 @@ span {
   margin-right: 10px;
 }
 
-.textarea {
-  width: 100%;
-  font-size: 14px;
-  outline: none;
-  font-weight: 100;
-  border: none;
-}
-
-::-webkit-input-placeholder {
-  color: #d8d8d8;
-}
-::-moz-placeholder {
-  color: #d8d8d8;
-}
-:-ms-input-placeholder {
-  color: #d8d8d8;
-}
-:-moz-placeholder {
-  color: #d8d8d8;
-}
-
-button {
-  cursor: pointer;
-  border: 1px solid #ccc;
-  padding: 6px 10px;
-  margin: 0 -1px;
-  background: white;
-  transition: background 0.3s;
-  outline: none;
-  color: #858f9a;
-}
-
-button.submit {
-  margin-top: 20px;
-}
-
-button:hover {
-  background: #ccc;
-}
-
-button.active {
-  background: #d9edff;
-}
-
-ul {
+.observation-edit-list {
   padding-left: 20px;
   margin: 0;
 }
 
-.closed > ul {
+.closed > .observation-edit-list {
   display: none;
 }
 
@@ -163,9 +114,13 @@ ul {
   margin-left: -25px;
 }
 
-li > div.drag-icon span,
-.parent-item:hover > div.drag-icon span {
+.edit-list-item > div > div.drag-icon span,
+.parent-item:hover > div > div.drag-icon span {
   display: none;
+}
+
+.edit-list-item:hover > div > div.drag-icon span {
+  display: inline;
 }
 
 .icon-hover {
@@ -191,57 +146,8 @@ li > div.drag-icon span,
   color: #ffffff;
 }
 
-body > li > div.drag-icon span,
-li:hover > div.drag-icon span {
-  display: inline;
-}
-
-body > li > .list-icon {
-  display: none;
-}
-
 .list-icon:hover .icon-hover {
   display: block;
-}
-
-button.disabled {
-    opacity: 0.4;
-    cursor: auto;
-}
-
-.text-input {
-    width: 100%;
-    padding: 10px 0;
-    font-size: 14px;
-    outline: none;
-    border: none;
-    font-weight: 100;
-}
-
-.text-input::-webkit-input-placeholder {
-  color: #23afff;
-}
-.text-input::-moz-placeholder {
-  color: #23afff;
-}
-.text-input:-ms-input-placeholder {
-  color: #23afff;
-}
-.text-input:-moz-placeholder {
-  color: #23afff;
-}
-
-.text-input:focus::-webkit-input-placeholder {
-  color: transparent;
-}
-.text-input:focus::-moz-placeholder {
-  color: transparent;
-}
-.text-input:focus:-ms-input-placeholder {
-  color: transparent;
-}
-.text-input:focus:-moz-placeholder {
-  color: transparent;
 }
 
 

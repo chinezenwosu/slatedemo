@@ -99,32 +99,24 @@ class TextEditor extends Component {
         const {node, editor} = props;
         const value = editor.value
         const parent = value.document.getParent(node.key);
-        const grid = 8;
         const isDocument = parent.kind === "document";
-        const getListStyle = isDraggingOver => ({
-            background: isDraggingOver ? 'white' : '',
-            // padding: grid,
-            // display: 'inline-block',
-        });
 
-        {/*<Droppable droppableId={node.key}>
-            {(provided, snapshot) => (
-                <div
-                    ref={provided.innerRef}
-                    className="observation-edit-list"
-                    style={getListStyle(snapshot.isDraggingOver)}
-                    {...props.attributes}
-                >
-                    {props.children}
-                    {provided.placeholder}
-                </div>
-            )}
-        </Droppable>*/}
-        const droppableList = (
-            <Droppable droppableId={node.key}>
+        let typeProps = {}
+        if (isDocument) {
+            typeProps = {type: "list"};
+        }
+
+        let droppableList = (
+            <Droppable droppableId={node.key} {...typeProps}>
                 {(provided, snapshot) => (
-                    <div ref={provided.innerRef} className="observation-edit-list" style={getListStyle(snapshot.isDraggingOver)}>
-                        {props.children}
+                    <div>
+                        <div
+                            ref={provided.innerRef}
+                            className="observation-edit-list"
+                            {...props.attributes}
+                        >
+                            {props.children}
+                        </div>
                         {provided.placeholder}
                     </div>
                 )}
@@ -143,11 +135,11 @@ class TextEditor extends Component {
     }
 
     highlightedItems(props) {
-        const {node, editor} = props;
+        const {node, editor, children} = props;
         const value = editor.value
         const isCurrentItem = editListPlugin.utils.getItemsAtRange(value).contains(node)
         const depth = editListPlugin.utils.getItemDepth(value)
-        const hasChildItems = props.children.length > 1
+        const hasChildItems = children.length > 1
 
         // Only make the first depth of list items draggable.
         const parent = value.document.getParent(node.key)
@@ -179,53 +171,44 @@ class TextEditor extends Component {
 
         const getItemStyle = (draggableStyle, isDragging) => {
             return Object.assign({
-                userSelect: isDragging ? 'none' : 'unset',
-                // padding: grid * 2,
-                // margin: `0 0 ${grid}px 0`,
-
-                // change background colour if dragging
-                background: isDragging ? 'white' : '',
+                userSelect: 'none',
+                background: 'white',
             }, draggableStyle)
         };
-
-        {/*<li className={classNames}
-            title={isCurrentItem ? 'Current Item' : ''}
-            {...props.attributes}>
-            {hasChildItems && ParentDragHandle}
-            {!hasChildItems && isDraggable && <div className='drag-icon'><span onMouseOver={() => this.editor.blur()}>:::</span></div>}
-            {
-                isDraggable &&
-                hasChildItems &&
-                <div className='drag-icon'>
-                    <span contentEditable={false}>:::</span>
-                </div>
-            }
-            {props.children}
-        </li>*/}
+        const parentParent = value.document.getParent(parent.key);
+        const isDocument = parent.kind === "document";
+        let typeProps = {}
+        if (isFirstParent) {
+            typeProps = {type: "list"};
+        }
         return (
-            <Draggable key={node.key} draggableId={node.key}>
+            <Draggable key={node.key} draggableId={node.key} {...typeProps}>
                 {(provided, snapshot) => (
-                    <div
-                        className={classNames}
-                        ref={provided.innerRef}
-                        style={getItemStyle(
-                            provided.draggableStyle,
-                            snapshot.isDragging
-                        )}
-                        {...props.attributes}
-                    >
-                        <div className="observation-drag-handle" {...provided.dragHandleProps}>
-                            {hasChildItems && ParentDragHandle}
-                            {!hasChildItems && isDraggable && <div className='drag-icon'><span onMouseOver={() => this.editor.blur()}>:::</span></div>}
-                            {
-                                isDraggable &&
-                                hasChildItems &&
-                                <div className='drag-icon'>
-                                    <span contentEditable={false}>:::</span>
-                                </div>
-                            }
+                    <div>
+                        <div
+                            className={classNames}
+                            ref={provided.innerRef}
+                            style={getItemStyle(
+                                provided.draggableStyle,
+                                snapshot.isDragging
+                            )}
+                            {...props.attributes}
+                            {...provided.dragHandleProps}
+                        >
+                            <div className="observation-drag-handle">
+                                {hasChildItems && ParentDragHandle}
+                                {!hasChildItems && isDraggable && <div className='drag-icon'><span onMouseOver={() => this.editor.blur()}>:::</span></div>}
+                                {
+                                    isDraggable &&
+                                    hasChildItems &&
+                                    <div className='drag-icon'>
+                                        <span contentEditable={false}>:::</span>
+                                    </div>
+                                }
+                            </div>
+                            {children}
                         </div>
-                        {props.children}
+                        {provided.placeholder}
                     </div>
                 )}
             </Draggable>
@@ -309,8 +292,8 @@ const getItems = count => {
             group: [
                 {id: 'item-12', content: 'item 12'},
                 {id: 'item-13', content: 'item 13'},
-                {id: 'item-14', content: 'item-14', group: list.splice(0, 6)},
-                {id: 'item-15', content: 'item-15', group: list}
+                {id: 'item-14', content: 'item 14', group: list.splice(0, 6)},
+                {id: 'item-15', content: 'item 15', group: list}
             ]
         },
     }
@@ -388,7 +371,7 @@ class App extends Component {
       console.log("this.state.items", this.state.items)
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="list-1">
+        <Droppable droppableId="list-1" type="list-1">
         {(provided, snapshot) => (
             <div
             ref={provided.innerRef}
@@ -396,7 +379,7 @@ class App extends Component {
             >
             {this.state.items["list-1"].group.map((item, index) => {
                 return (
-                    <Draggable key={item.id} draggableId={item.id}>
+                    <Draggable key={item.id} draggableId={item.id} type="list-1">
                         {(provided, snapshot) => (
                             <div>
                                 <div
@@ -411,14 +394,14 @@ class App extends Component {
                                     {item.content}
                                     {
                                         item.group &&
-                                        <Droppable droppableId={item.id} type="list-1">
-                                            {(providedd, snapshot) => (
+                                        <Droppable droppableId={item.id}>
+                                            {(provided, snapshot) => (
                                                 <div
                                                 ref={provided.innerRef}
                                                 style={getListStyle(snapshot.isDraggingOver)}
                                                 >
                                                 {item.group.map(innerItem => (
-                                                    <Draggable key={innerItem.id} draggableId={innerItem.id} type="list-1">
+                                                    <Draggable key={innerItem.id} draggableId={innerItem.id}>
                                                     {(provided, snapshot) => (
                                                         <div>
                                                             <div

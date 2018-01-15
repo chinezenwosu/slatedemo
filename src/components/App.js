@@ -59,7 +59,7 @@ const itemTarget = {
         const itemParentKey = monitor.getItem().parentKey;
 
         // dont replace items with themselves
-        if (itemIndex === targetIndex || itemParentKey === targetParentKey) {
+        if (itemIndex === targetIndex) {
             return;
         }
 

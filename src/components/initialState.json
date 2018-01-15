@@ -2,7 +2,7 @@
    "document": {
       "nodes": [
          {
-            "kind": "block",
+            "object": "block",
             "type": "categories",
             "data": {
                "style": {
@@ -11,16 +11,16 @@
             },
             "nodes": [
 							{
-                  "kind": "block",
+                  "object": "block",
                   "type": "name",
                   "nodes": [
                      {
-                        "kind": "block",
+                        "object": "block",
                         "type": "paragraph",
                         "nodes": [
                            {
-                              "kind": "text",
-                              "ranges": [
+                              "object": "text",
+                              "leaves": [
                                  {
                                     "text": "Sharp lower abdominal pain"
                                  }
@@ -29,7 +29,7 @@
                         ]
                      },
                      {
-                        "kind": "block",
+                        "object": "block",
                         "type": "categories",
                         "data": {
                            "style": {
@@ -38,16 +38,16 @@
                         },
                         "nodes": [
                            {
-                              "kind": "block",
+                              "object": "block",
                               "type": "name",
                               "nodes": [
                                  {
-                                    "kind": "block",
+                                    "object": "block",
                                     "type": "paragraph",
                                     "nodes": [
                                        {
-                                          "kind": "text",
-                                          "ranges": [
+                                          "object": "text",
+                                          "leaves": [
                                              {
                                                 "text": "Subregion: Lower"
                                              }
@@ -58,16 +58,16 @@
                               ]
                            },
                            {
-                              "kind": "block",
+                              "object": "block",
                               "type": "name",
                               "nodes": [
                                  {
-                                    "kind": "block",
+                                    "object": "block",
                                     "type": "paragraph",
                                     "nodes": [
                                        {
-                                          "kind": "text",
-                                          "ranges": [
+                                          "object": "text",
+                                          "leaves": [
                                              {
                                                 "text": "Sensation: Sharp"
                                              }
@@ -82,16 +82,16 @@
                   ]
                },
                {
-                  "kind": "block",
+                  "object": "block",
                   "type": "name",
                   "nodes": [
                      {
-                        "kind": "block",
+                        "object": "block",
                         "type": "paragraph",
                         "nodes": [
                            {
-                              "kind": "text",
-                              "ranges": [
+                              "object": "text",
+                              "leaves": [
                                  {
                                     "text": "Heart Murmur"
                                  }
@@ -100,7 +100,7 @@
                         ]
                      },
                      {
-                        "kind": "block",
+                        "object": "block",
                         "type": "categories",
                         "data": {
                            "style": {
@@ -109,16 +109,16 @@
                         },
                         "nodes": [
                            {
-                              "kind": "block",
+                              "object": "block",
                               "type": "name",
                               "nodes": [
                                  {
-                                    "kind": "block",
+                                    "object": "block",
                                     "type": "paragraph",
                                     "nodes": [
                                        {
-                                          "kind": "text",
-                                          "ranges": [
+                                          "object": "text",
+                                          "leaves": [
                                              {
                                                 "text": "Detail: Soft midsystolic murmur at the second left intercostal space."
                                              }
@@ -129,16 +129,16 @@
                               ]
                            },
                            {
-                              "kind": "block",
+                              "object": "block",
                               "type": "name",
                               "nodes": [
                                  {
-                                    "kind": "block",
+                                    "object": "block",
                                     "type": "paragraph",
                                     "nodes": [
                                        {
-                                          "kind": "text",
-                                          "ranges": [
+                                          "object": "text",
+                                          "leaves": [
                                              {
                                                 "text": "Finding: A separate holosystolic murmur at the apex."
                                              }

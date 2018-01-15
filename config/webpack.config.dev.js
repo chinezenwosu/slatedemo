@@ -1,22 +1,23 @@
-import path from 'path';
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+let path = require('path');
+let webpack = require('webpack');
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-export default {
-  devtool: 'eval-source-map',
+module.exports = {
+  devtool: 'source-map',
   entry: [
-    'webpack-hot-middleware/client',
-    path.join(__dirname, '../src/index.js'),
+    path.join(__dirname, '..', '/src/index.js'),
   ],
   output: {
-    path: '/',
+    path: path.join(__dirname, '..', 'public'),
     filename: 'bundle.js',
     publicPath: '/',
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('development'),
+      },
+    }),
     new ExtractTextPlugin('[name].css'),
   ],
   module: {

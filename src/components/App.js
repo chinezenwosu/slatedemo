@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { Value } from 'slate';
-import { Editor } from 'slate-react';
+import { Editor, getEventRange } from 'slate-react';
 import editList from 'slate-edit-list';
 import stateJson from './initialState.json';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
@@ -27,16 +27,6 @@ const itemSource = {
             parentKey: props.parentKey,
 		};
     },
-
-    endDrag(props, monitor) {
-		const item = monitor.getItem();
-		const dropResult = monitor.getDropResult();
-        console.log('END DRAG SS', item, dropResult);
-        // Perform remove action if item was moved to another list.
-		if ( dropResult && dropResult.parentKey !== item.parentKey ) {
-			props.removeItem(item.key);
-		}
-	},
 };
 
 const itemSourceConnect = (connect, monitor) => {
@@ -48,81 +38,13 @@ const itemSourceConnect = (connect, monitor) => {
     return connectObj;
  };
 
-const itemTarget = {
-
-    hover(props, monitor, component) {
-        const itemIndex = monitor.getItem().index;
-		const targetIndex = props.index;
-        const itemKey = monitor.getItem().key;
-        const targetKey = props.attributes['data-key'];
-        const targetParentKey = props.parentKey;
-        const itemParentKey = monitor.getItem().parentKey;
-
-        // dont replace items with themselves
-        if (itemIndex === targetIndex) {
-            return;
-        }
-
-        // Determine rectangle on screen
-        const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
-
-        // Get vertical middle
-        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-        // Determine mouse position
-        const clientOffset = monitor.getClientOffset();
-
-        // Get pixels to the top
-        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-        // Only perform the move when the mouse has crossed half of the items height
-        // When dragging downwards, only move when the cursor is below 50%
-        // When dragging upwards, only move when the cursor is above 50%
-
-        // Dragging downwards
-        if (itemKey < targetKey && hoverClientY < hoverMiddleY) {
-            return;
-        }
-
-        // Dragging upwards
-        if (itemKey > targetKey && hoverClientY > hoverMiddleY) {
-            return;
-        }
-
-        // Perform sort action if item is in the same list.
-        if(itemParentKey === targetParentKey) {
-            props.sortItems({ itemKey, targetKey, targetIndex });
-
-            // Note: we're mutating the monitor item here!
-            // to avoid expensive index searches.
-            monitor.getItem().key = targetKey;
-        }
-    },
-};
-
-const itemTargetConnect = (connect) => {
-    const connectObj = {
-        connectDropTarget: connect.dropTarget(),
-    };
-    return connectObj;
- };
 
 const listTarget = {
     drop(props, monitor) {
-        // Check if the item drop has been handled by a child list and return.
-        console.log('DROP SS', props, monitor);
-        const droppedInChild = monitor.didDrop();
-        if (droppedInChild) {
-            return;
-        }
         const parentKey = props.key;
-        const itemKey = monitor.getItem().key;
         const targetParentKey = monitor.getItem().parentKey;
-        const targetIndex = monitor.getItem().index;
-        // Perform drop action if item was moved from one list to another.
         if ( parentKey !== targetParentKey ) {
             // Perform sort action
-            props.insertItem({ itemKey, parentKey, targetIndex });
             return {
                 parentKey,
             };
@@ -148,7 +70,6 @@ class ListItem extends Component {
             editor,
             classNames,
             connectDragSource,
-            connectDropTarget,
             canDrag,
             hasChildItems,
 			isDragging,
@@ -176,14 +97,11 @@ class ListItem extends Component {
         //         </span>);
         // };
         // const dragHandle = () => (<span onMouseOver={() => editor.blur()}>:::</span>);
-        return connectDragSource(
-			connectDropTarget(<li className={classNames} title={title} style={{ opacity }} {...attributes}>{children}</li>),
-		);
+        return connectDragSource(<li className={classNames} title={title} style={{ opacity }} {...attributes}>{children}</li>);
 	}
 }
 
-const ItemDragWrap = DragSource('LIST', itemSource, itemSourceConnect)(ListItem);
-const DragabbleListItem = DropTarget('LIST', itemTarget, itemTargetConnect)(ItemDragWrap);
+const DragabbleListItem = DragSource('LIST', itemSource, itemSourceConnect)(ListItem);
 
 
 class List extends Component {
@@ -215,9 +133,7 @@ class TextEditor extends Component {
         this.highlightedItems = this.highlightedItems.bind(this);
         this.highlightedList = this.highlightedList.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.insertItem = this.insertItem.bind(this);
-        this.removeItem = this.removeItem.bind(this);
-        this.sortItems = this.sortItems.bind(this);
+        this.onDrop = this.onDrop.bind(this);
         this.toggleListItem = this.toggleListItem.bind(this);
 	}
 
@@ -225,6 +141,20 @@ class TextEditor extends Component {
         this.setState({
           value: change.value,
         });
+    }
+
+    onDrop(event, change) {
+        const { value } = change;
+        const { document, selection } = value;
+        let target = getEventRange(event, value);
+        const targetNode = document.getParent(target.anchorKey);
+        const draggedNode = document.getParent(selection.anchorKey);
+        const targetParent = document.getParent(targetNode.key);
+        const draggedParent = document.getParent(draggedNode.key);
+        const targetGrandParent = document.getParent(targetParent.key);
+        const index = targetGrandParent.nodes.indexOf(targetParent);
+        change.moveNodeByKey(draggedParent.key, targetGrandParent.key, index);
+        this.onChange(change);
     }
 
     call(change) {
@@ -253,40 +183,11 @@ class TextEditor extends Component {
         });
     }
 
-    insertItem({ itemKey, parentKey, index }) {
-        console.log(itemKey, index, 'INSERT');
-        this.editor.change((change) => {
-            const { document } = change.value;
-            const node = document.assertKey(itemKey);
-            change.insertNodeByKey(parentKey, index, node);
-            this.onChange(change);
-        });
-    }
-
-    removeItem({ itemKey }) {
-        console.log(itemKey, 'REMOVE');
-        this.editor.change((change) => {
-            change.removeNodeByKey(itemKey);
-            this.onChange(change);
-        });
-    }
-
-    sortItems({ itemKey, targetKey, targetIndex }) {
-        this.editor.change((change) => {
-            const { document } = change.value;
-            const targetNode = document.assertNode(targetKey);
-            const parent = document.getParent(targetNode.key);
-            change.moveNodeByKey(itemKey, parent.key, targetIndex);
-            this.onChange(change);
-        });
-    }
-
     highlightedList(props) {
         return (
             <DroppableList
                 attributes={props.attributes}
                 children={props.children}
-                insertItem={self.insertItem}
              />
         );
     }
@@ -326,8 +227,6 @@ class TextEditor extends Component {
                 toggleListItem={self.toggleListItem}
                 parentItems={self.state.parentItems}
                 parentKey={parent.key}
-                removeItem={self.removeItem}
-                sortItems={self.sortItems}
         />);
     }
 
@@ -430,6 +329,7 @@ class TextEditor extends Component {
                     plugins={plugins}
                     value={this.state.value}
                     onChange={this.onChange}
+                    onDrop={this.onDrop}
                     renderNode={this.renderNode}
                     renderMark={this.renderMark}
                 />
